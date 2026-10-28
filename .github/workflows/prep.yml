@@ -4,9 +4,8 @@ name: prep
 
 on:
   # 30분마다 새 글이 있는지만 가볍게 확인(약 20초)하고, 새 글이 있을 때만 전체 실행. GitHub 시간은 UTC.
-  # 전환할 때 아래 두 줄 앞의 # 을 지움 (시험 중에는 수동 실행만)
-  # schedule:
-  #   - cron: "17,47 * * * *"
+  schedule:
+    - cron: "17,47 * * * *"
   workflow_dispatch:
     inputs:
       submit:

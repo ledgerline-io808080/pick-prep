@@ -64,6 +64,14 @@ def norm(s):
     return re.sub(r"\s+", "", s or "")
 
 
+# 네이버 조회가 실패해도(응답 지연 등) 글 제목에 주요 리그 이름이 있으면 주요 리그로 봄 (2026-10-28: NBA 경기가 잡리그 묶음 '[NBA 4경기]'로 올라감)
+MAJOR_TITLE = re.compile(r"(?<![A-Za-z])(NBA|KBL|MLB|KBO|NPB)(?![A-Za-z])|V리그|KOVO")
+
+
+def major_by_title(title, sport):
+    return sport != "football" and bool(MAJOR_TITLE.search(title or ""))
+
+
 def src_league(seg):
     """네이버에 없는 경기: 원문 경기 머리줄의 리그명 (예: 'AFC CUP 10월 23일(금) 22시25분' → 'AFC CUP').
     2026-10-23 '기타' 한 묶음으로 A리그·AFC컵이 섞여 '[A리그 3경기]' 제목으로 올라감 → 원문 리그명별로 묶음."""
@@ -136,7 +144,7 @@ def main():
         if sport == "football" and not (is_big_naver(g) or star_game(m.get("home"), m.get("away"))):
             print(f"  [건너뜀] {label}: 유럽 빅리그·손흥민·메시 경기가 아님 ({(g or {}).get('categoryName') or '리그 모름'})")
             continue  # 2026-10-23 축구는 유럽 빅리그 + 손흥민·메시 경기만
-        if not is_major(g, sport):  # 잡리그 → 리그별 묶음
+        if not is_major(g, sport) and not (not g and major_by_title(art.get("title", ""), sport)):  # 잡리그 → 리그별 묶음
             league = (g or {}).get("categoryName") or src_league(seg) or src_league(lines[max(0, s - 2):s]) or "기타"
             groups.setdefault(league, []).append((label, seg))
             continue

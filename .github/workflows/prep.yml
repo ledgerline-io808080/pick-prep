@@ -4,8 +4,9 @@ name: prep
 
 on:
   # 30분마다 새 글이 있는지만 가볍게 확인(약 20초)하고, 새 글이 있을 때만 전체 실행. GitHub 시간은 UTC.
-  schedule:
-    - cron: "17,47 * * * *"
+  # 전환할 때 아래 두 줄 앞의 # 을 지움 (시험 중에는 수동 실행만)
+  # schedule:
+  #   - cron: "17,47 * * * *"
   workflow_dispatch:
     inputs:
       submit:
@@ -14,6 +15,9 @@ on:
         default: false
       article:
         description: "특정 글 번호 (비우면 최신 글)"
+        required: false
+      board:
+        description: "한 게시판만 (boards.json 의 key, 예: ls_baseball)"
         required: false
 
 permissions:
@@ -71,6 +75,7 @@ jobs:
         run: |
           ARGS="--count 3"
           if [ -n "${{ inputs.article }}" ]; then ARGS="--article ${{ inputs.article }}"; fi
+          if [ -n "${{ inputs.board }}" ]; then ARGS="$ARGS --board ${{ inputs.board }}"; fi
           if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.submit }}" = "true" ]; then ARGS="$ARGS --submit"; fi
           python -u run_prepare.py $ARGS
 

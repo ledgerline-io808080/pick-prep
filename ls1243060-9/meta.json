@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243060-9",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 뉴올리언스 vs 덴버 핵심 정리",
+  "kickoff": "10/29(목) 09:00 KST",
+  "kickoff_kst": "2026-10-29T09:00:00+09:00",
+  "match_keys": [
+    "2026-10-29T09:00|api:139|150",
+    "2026-10-29T09:00|뉴올리언스|덴버"
+  ],
+  "staged_at": "2026-10-28 22:59"
+}

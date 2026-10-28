@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243060-1",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 애틀랜타 vs 마이애미 핵심 정리",
+  "kickoff": "10/29(목) 08:00 KST",
+  "kickoff_kst": "2026-10-29T08:00:00+09:00",
+  "match_keys": [
+    "2026-10-29T08:00|api:132|147",
+    "2026-10-29T08:00|마이애미|애틀랜타"
+  ],
+  "staged_at": "2026-10-28 22:30"
+}

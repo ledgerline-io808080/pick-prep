@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243060-10",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 유타 vs 샌안토니오 핵심 정리",
+  "kickoff": "10/29(목) 10:00 KST",
+  "kickoff_kst": "2026-10-29T10:00:00+09:00",
+  "match_keys": [
+    "2026-10-29T10:00|api:158|160",
+    "2026-10-29T10:00|샌안토니오|유타"
+  ],
+  "staged_at": "2026-10-28 23:02"
+}

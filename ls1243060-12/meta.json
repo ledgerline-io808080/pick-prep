@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243060-12",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] LA클리퍼스 vs LA레이커스 핵심 정리",
+  "kickoff": "10/29(목) 11:30 KST",
+  "kickoff_kst": "2026-10-29T11:30:00+09:00",
+  "match_keys": [
+    "2026-10-29T11:30|LA레이커스|LA클리퍼스",
+    "2026-10-29T11:30|api:144|145"
+  ],
+  "staged_at": "2026-10-28 23:09"
+}

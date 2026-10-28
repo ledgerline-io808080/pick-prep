@@ -1,19 +1,12 @@
 {
-  "at": "2026-10-28 12:18",
+  "at": "2026-10-28 12:37",
   "rows": [
     {
-      "aid": "ls1721943",
+      "aid": "ls1721958",
       "board": "ls_baseball",
-      "status": "가져오기 실패 - 건너뜀",
-      "tries": 4,
-      "title": ""
-    },
-    {
-      "aid": "ls1721949",
-      "board": "ls_baseball",
-      "status": "가져오기 실패 - 건너뜀",
-      "tries": 4,
-      "title": ""
+      "status": "경기 확인 실패 - 게시 안 함",
+      "tries": 2,
+      "title": "[NPB] 소프트뱅크 vs 요코하마 선발 매치업"
     }
   ]
 }

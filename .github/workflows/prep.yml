@@ -101,4 +101,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
           POST_REPO: ${{ secrets.POST_REPO }}
-        run: gh workflow run post.yml --repo "$POST_REPO" -f from=prep
+        run: gh api -X POST "repos/$POST_REPO/actions/workflows/post.yml/dispatches" -f ref=main -f "inputs[from]=prep"

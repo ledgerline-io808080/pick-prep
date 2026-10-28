@@ -1,0 +1,92 @@
+[
+  {
+    "key": "shotdol",
+    "name": "숏돌이",
+    "board_url": "https://cafe.naver.com/f-e/cafes/25720488/menus/96?viewType=L",
+    "sport": "football",
+    "style": "C",
+    "theme": "A",
+    "chart": "basic"
+  },
+  {
+    "key": "nongdal",
+    "name": "농구달인",
+    "board_url": "https://cafe.naver.com/f-e/cafes/25720488/menus/99?viewType=L",
+    "sport": "basketball",
+    "style": "A",
+    "theme": "B",
+    "chart": "kbl"
+  },
+  {
+    "key": "wonpoall",
+    "name": "원포올",
+    "board_url": "https://cafe.naver.com/f-e/cafes/25720488/menus/94?viewType=L",
+    "sport": "football",
+    "style": "C",
+    "theme": "A",
+    "chart": "basic"
+  },
+  {
+    "key": "jalmeok",
+    "name": "잘먹겠습니다",
+    "board_url": "https://cafe.naver.com/f-e/cafes/25720488/menus/98?viewType=L",
+    "sport": "football",
+    "style": "C",
+    "theme": "A",
+    "chart": "basic"
+  },
+  {
+    "key": "dolharbang",
+    "name": "돌하르방",
+    "board_url": "https://cafe.naver.com/f-e/cafes/25720488/menus/95?viewType=L",
+    "sport": "baseball",
+    "style": "E",
+    "theme": "E",
+    "chart": "pitcher"
+  },
+  {
+    "key": "ls_soccer",
+    "name": "라이브스코어 축구 (적중PD·픽타벅스·부스터픽대통령·POLICE)",
+    "source": "livescore",
+    "board_url": "https://livescore.co.kr/mobile/bbs/board.php?bo_table=soccer",
+    "author": "부스터픽대통령,",
+    "sport": "football",
+    "style": "C",
+    "theme": "A",
+    "chart": "basic"
+  },
+  {
+    "key": "ls_basketball",
+    "name": "라이브스코어 농구 (적중PD·픽타벅스·부스터픽대통령·POLICE)",
+    "source": "livescore",
+    "board_url": "https://livescore.co.kr/mobile/bbs/board.php?bo_table=basketball",
+    "author": "부스터픽대통령,",
+    "sport": "basketball",
+    "style": "A",
+    "theme": "B",
+    "chart": "kbl"
+  },
+  {
+    "key": "ls_baseball",
+    "name": "라이브스코어 야구 (적중PD·픽타벅스·부스터픽대통령·POLICE)",
+    "source": "livescore",
+    "board_url": "https://livescore.co.kr/mobile/bbs/board.php?bo_table=baseball",
+    "author": "부스터픽대통령,",
+    "sport": "baseball",
+    "style": "E",
+    "theme": "E",
+    "chart": "pitcher"
+  },
+  {
+    "key": "ls_volleyball",
+    "name": "라이브스코어 배구 (적중PD·픽타벅스·부스터픽대통령·POLICE)",
+    "source": "livescore",
+    "board_url": "https://livescore.co.kr/mobile/bbs/board.php?bo_table=volleyball",
+    "author": "적중PD,",
+    "sport": "volleyball",
+    "style": "D",
+    "theme": "D",
+    "chart": "basic",
+    "layout": "card"
+  }
+]

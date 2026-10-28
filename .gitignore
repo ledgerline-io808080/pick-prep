@@ -1,0 +1,16 @@
+# 로그인·키는 절대 올리지 않음 (GitHub 비밀값으로 따로 등록)
+naver_session.json
+sessions/
+*.key
+.env
+# 작업 결과물·임시 파일
+글/
+debug_*.png
+*.html
+banner.png
+__pycache__/
+stuck_alert.md
+login_alert.md
+new_boards.json
+queue/
+_queue_tree/

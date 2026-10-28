@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-28 11:46",
+  "rows": [
+    {
+      "aid": "ls1721943",
+      "board": "ls_baseball",
+      "status": "가져오기 실패 - 건너뜀",
+      "tries": 2,
+      "title": ""
+    },
+    {
+      "aid": "ls1721949",
+      "board": "ls_baseball",
+      "status": "가져오기 실패 - 건너뜀",
+      "tries": 2,
+      "title": ""
+    }
+  ]
+}

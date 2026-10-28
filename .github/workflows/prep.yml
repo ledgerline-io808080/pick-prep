@@ -93,6 +93,7 @@ jobs:
       # 등록 쪽(비공개 저장소)에 알림. 저장소 이름은 비밀값 POST_REPO, 권한 토큰은 DISPATCH_TOKEN
       - name: 등록 쪽 깨우기
         if: always() && steps.push.outputs.staged == 'true'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
           POST_REPO: ${{ secrets.POST_REPO }}

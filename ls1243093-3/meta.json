@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243093-3",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 포틀랜드 vs 멤피스 핵심 정리",
+  "kickoff": "10/30(금) 11:00 KST",
+  "kickoff_kst": "2026-10-30T11:00:00+09:00",
+  "match_keys": [
+    "2026-10-30T11:00|api:146|156",
+    "2026-10-30T11:00|멤피스|포틀랜드"
+  ],
+  "staged_at": "2026-10-29 22:28"
+}

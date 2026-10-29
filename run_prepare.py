@@ -57,6 +57,8 @@ def should_skip(v, done=None):
         return v.get("resplits", 0) >= MAX_TRIES or all(should_skip(done.get(s)) for s in v["subs"])
     if v.get("status") in ("미리보기", "미리보기 실패"):
         return False
+    if v.get("status") == "경기 확인 실패 - 게시 안 함" and v.get("tries", 1) >= 8:
+        return True  # 경기 시간을 8번(약 4시간) 못 찾으면 그만 (2026-10-29: 21번까지 다시 쓰기를 반복해 Claude 사용량 낭비)
     if v.get("status") in RETRY and v.get("tries", 1) < MAX_TRIES:
         ko = v.get("kickoff_kst")
         if ko and datetime.datetime.fromisoformat(ko) <= datetime.datetime.now(KST):

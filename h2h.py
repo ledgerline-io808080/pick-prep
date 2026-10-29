@@ -448,6 +448,111 @@ def mlb_match(m, article_time=None):
     return stats, match
 
 
+# ---------------------------------------------------------------- KBO·NPB 공식 일정 (2026-10-29)
+# 네이버 스포츠가 서버에서 자주 응답하지 않아(읽기 시간 초과) 야구는 경기 시간을 공식 일정으로 먼저 확인한다.
+KBO_TEAMS = {"기아": "KIA", "kia": "KIA", "kt": "KT", "lg": "LG", "nc": "NC", "ssg": "SSG", "삼성": "삼성", "두산": "두산",
+             "롯데": "롯데", "한화": "한화", "키움": "키움"}
+NPB_TEAMS = {"소프트뱅크": "ソフトバンク", "니혼햄": "日本ハム", "닛폰햄": "日本ハム", "롯데": "ロッテ", "라쿠텐": "楽天",
+             "세이부": "西武", "오릭스": "オリックス", "요미우리": "巨人", "한신": "阪神", "요코하마": "DeNA", "DeNA": "DeNA",
+             "dena": "DeNA", "히로시마": "広島", "야쿠르트": "ヤクルト", "주니치": "中日"}
+
+
+def _official_result(m, title_src, ko, league, now):
+    label = f"{ko.month}/{ko.day}({WEEK[ko.weekday()]}) {ko:%H:%M} KST"
+    match = {"kickoff_kst": ko.isoformat(), "label": label, "league": league, "league_ko": league,
+             "venue": None, "round": None, "source": f"{league} 공식 일정"}
+    if ko < now:
+        match["finished"] = True
+    title = f"{m['home']} vs {m['away']}"
+    stats = {"league": f"{title} · {label}", "basis": f"최근 맞대결 기록 없음 · 출처 {title_src}",
+             "home": {"name": m["home"], "logo": m.get("home_en", m["home"])},
+             "away": {"name": m["away"], "logo": m.get("away_en", m["away"])}, "h2h": None, "h2h_matches": []}
+    print(f"  {title}: [{league} 공식] 경기 시간: {label}")
+    return stats, match
+
+
+def _pick_game(cands, base):
+    """글이 올라온 시각 직후의 가장 빠른 경기(글이 올라오기 6시간 전까지는 인정), 없으면 가장 최근 경기.
+    (지금 시각 기준으로 고르면 지난 글이 며칠 뒤 다른 경기로 잘못 이어짐)"""
+    cands.sort()
+    after = [c for c in cands if c >= base - datetime.timedelta(hours=6)]
+    return after[0] if after else cands[-1]
+
+
+def kbo_match(m, article_time=None):
+    """KBO 공식 일정(koreabaseball.com)으로 경기 시간 확인."""
+    now = datetime.datetime.now(KST)
+    base = (article_time or now).astimezone(KST)
+    want = set()
+    for k in ("home", "away"):
+        n = KBO_TEAMS.get(re.sub(r"\s+", "", m[k]).lower())
+        if not n:
+            raise RuntimeError(f"KBO 팀이 아님: {m[k]}")
+        want.add(n)
+    start, end = base - datetime.timedelta(days=1), base + datetime.timedelta(days=5)
+    months = sorted({(start.year, start.month), (end.year, end.month)})
+    cands = []
+    for yy, mm in months:
+        r = requests.post("https://www.koreabaseball.com/ws/Schedule.asmx/GetScheduleList", timeout=30,
+                          headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.koreabaseball.com/Schedule/Schedule.aspx"},
+                          data={"leId": 1, "srIdList": "0,1,3,4,5,7,8,9,6", "seasonId": yy, "gameMonth": f"{mm:02d}", "teamId": ""})
+        r.raise_for_status()
+        day = None
+        for row in r.json().get("rows", []):
+            cells = [re.sub(r"<[^>]+>", "", c.get("Text") or "").strip() for c in row["row"]]
+            htmls = [c.get("Text") or "" for c in row["row"]]
+            if cells and re.match(r"\d{2}\.\d{2}\(", cells[0]):
+                day = cells.pop(0)
+                htmls.pop(0)
+            if day is None or len(cells) < 8:
+                continue
+            tm = re.match(r"\d{1,2}:\d{2}$", cells[0])
+            teams = re.findall(r"<span>([^<]+)</span>", htmls[1])
+            if not tm or len(teams) < 2 or {teams[0], teams[-1]} != want or "취소" in cells[7]:
+                continue
+            mo, dd = int(day[:2]), int(day[3:5])
+            hh, mi = cells[0].split(":")
+            cands.append(datetime.datetime(yy, mo, dd, int(hh), int(mi), tzinfo=KST))
+    cands = [c for c in cands if start <= c <= end]
+    if not cands:
+        raise RuntimeError("KBO 공식 일정에서 경기를 찾지 못함")
+    return _official_result(m, "KBO 공식", _pick_game(cands, base), "KBO", now)
+
+
+def npb_match(m, article_time=None):
+    """NPB 공식 일정(npb.jp)으로 경기 시간 확인."""
+    now = datetime.datetime.now(KST)
+    base = (article_time or now).astimezone(KST)
+    want = set()
+    for k in ("home", "away"):
+        n = NPB_TEAMS.get(re.sub(r"\s+", "", m[k]).lower()) or NPB_TEAMS.get(re.sub(r"\s+", "", m[k]))
+        if not n:
+            raise RuntimeError(f"NPB 팀이 아님: {m[k]}")
+        want.add(n)
+    start, end = base - datetime.timedelta(days=1), base + datetime.timedelta(days=5)
+    months = sorted({(start.year, start.month), (end.year, end.month)})
+    cands = []
+    for yy, mm in months:
+        r = requests.get(f"https://npb.jp/games/{yy}/schedule_{mm:02d}_detail.html", timeout=30, headers={"User-Agent": "Mozilla/5.0"})
+        r.raise_for_status()
+        r.encoding = "utf-8"
+        day = None
+        for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", r.text, re.S):
+            dm = re.search(r"<th[^>]*>\s*(\d{1,2})/(\d{1,2})", tr)
+            if dm:
+                day = (int(dm.group(1)), int(dm.group(2)))
+            t1 = re.search(r'class="team1">([^<]+)<', tr)
+            t2 = re.search(r'class="team2">([^<]+)<', tr)
+            tm = re.search(r'class="time">\s*(\d{1,2}):(\d{2})', tr)
+            if not (day and t1 and t2 and tm) or {t1.group(1).strip(), t2.group(1).strip()} != want:
+                continue
+            cands.append(datetime.datetime(yy, day[0], day[1], int(tm.group(1)), int(tm.group(2)), tzinfo=KST))
+    cands = [c for c in cands if start <= c <= end]
+    if not cands:
+        raise RuntimeError("NPB 공식 일정에서 경기를 찾지 못함")
+    return _official_result(m, "NPB 공식", _pick_game(cands, base), "NPB", now)
+
+
 def main():
     global SPORT
     if "--sport" in sys.argv:
@@ -497,8 +602,16 @@ def main():
                     try:
                         stats, match = mlb_match(m, article_time)
                     except Exception as e0:
-                        print(f"  [MLB 공식 일정 없음] {e0} → 네이버")
-                        stats, match = naver_match(m, article_time)
+                        print(f"  [MLB 공식 일정 없음] {e0} → KBO 공식")
+                        try:
+                            stats, match = kbo_match(m, article_time)
+                        except Exception as e1:
+                            print(f"  [KBO 공식 일정 없음] {e1} → NPB 공식")
+                            try:
+                                stats, match = npb_match(m, article_time)
+                            except Exception as e1b:
+                                print(f"  [NPB 공식 일정 없음] {e1b} → 네이버")
+                                stats, match = naver_match(m, article_time)
                 else:
                     stats, match = naver_match(m, article_time)
             except Exception as e2:
@@ -508,7 +621,7 @@ def main():
                     print(f"  [실패] {m.get('home')} vs {m.get('away')}: {e2} / {e3}")
                     failed += 1
                     continue
-        if match.get("source") == "MLB 공식 일정":  # MLB 공식으로 찾은 경기는 네이버 종목 확인·경기 번호를 건너뜀
+        if match.get("source") in ("MLB 공식 일정", "KBO 공식 일정", "NPB 공식 일정"):  # 공식 일정으로 찾은 경기는 네이버 종목 확인·경기 번호를 건너뜀
             with open(os.path.join(folder, f"stats_{i}.json"), "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
             with open(os.path.join(folder, f"match_{i}.json"), "w", encoding="utf-8") as f:

@@ -627,7 +627,13 @@ def main():
                         print(f"  [{aid}] 이미 처리한 글이라 건너뜀 ({done[aid].get('status')})")
                         continue
                     ap_ = os.path.join(HERE, "글", aid, "article.json")
-                    t = json.load(open(ap_, encoding="utf-8")).get("date", stamp) if os.path.exists(ap_) else stamp
+                    art_ = json.load(open(ap_, encoding="utf-8")) if os.path.exists(ap_) else {}
+                    if re.search(r"가입|모집|이벤트|공지|안내", art_.get("title", "")):  # 분석 글이 아닌 카페 안내·모집 글 (2026-10-30: '가입안내' 글을 계속 다시 쓰려다 실패)
+                        print(f"  [{aid}] 분석 글이 아니라 건너뜀: {art_.get('title', '')[:30]}")
+                        done[aid] = {"at": stamp, "board": board["key"], "status": "분석 글 아님 - 건너뜀", "title": art_.get("title", "")}
+                        save_done(done)
+                        continue
+                    t = art_.get("date", stamp)
                     queue.append((t, 0, board, aid))
                     print(f"  새 글 {aid} (작성 {t})")
         save_seen(seen)

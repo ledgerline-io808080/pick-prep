@@ -1,0 +1,12 @@
+{
+  "aid": "ls1722014",
+  "board": "ls_baseball",
+  "sport": "baseball",
+  "title": "[KBO] KIA vs 삼성 선발 매치업",
+  "kickoff": "10/30(금) 18:30 KST",
+  "kickoff_kst": "2026-10-30T18:30:00+09:00",
+  "match_keys": [
+    "2026-10-30T18:30|KIA|삼성"
+  ],
+  "staged_at": "2026-10-30 12:06"
+}

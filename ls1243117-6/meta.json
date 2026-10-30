@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-6",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 마이애미 vs 인디애나 핵심 정리",
+  "kickoff": "10/31(토) 09:00 KST",
+  "kickoff_kst": "2026-10-31T09:00:00+09:00",
+  "match_keys": [
+    "2026-10-31T09:00|api:143|147",
+    "2026-10-31T09:00|마이애미|인디애나"
+  ],
+  "staged_at": "2026-10-30 22:37"
+}

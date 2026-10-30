@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-5",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 토론토 vs 올랜도 핵심 정리",
+  "kickoff": "10/31(토) 08:30 KST",
+  "kickoff_kst": "2026-10-31T08:30:00+09:00",
+  "match_keys": [
+    "2026-10-31T08:30|api:153|159",
+    "2026-10-31T08:30|올랜도|토론토"
+  ],
+  "staged_at": "2026-10-30 22:33"
+}

@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-1",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 워싱턴 vs 샬럿 핵심 정리",
+  "kickoff": "10/31(토) 08:00 KST",
+  "kickoff_kst": "2026-10-31T08:00:00+09:00",
+  "match_keys": [
+    "2026-10-31T08:00|api:135|161",
+    "2026-10-31T08:00|샬럿|워싱턴"
+  ],
+  "staged_at": "2026-10-30 22:19"
+}

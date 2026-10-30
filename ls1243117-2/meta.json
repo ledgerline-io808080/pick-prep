@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-2",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 보스턴 vs 시카고 핵심 정리",
+  "kickoff": "10/31(토) 08:30 KST",
+  "kickoff_kst": "2026-10-31T08:30:00+09:00",
+  "match_keys": [
+    "2026-10-31T08:30|api:133|136",
+    "2026-10-31T08:30|보스턴|시카고"
+  ],
+  "staged_at": "2026-10-30 22:23"
+}

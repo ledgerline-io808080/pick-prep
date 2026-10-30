@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-10",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 피닉스 vs 덴버 핵심 정리",
+  "kickoff": "10/31(토) 11:00 KST",
+  "kickoff_kst": "2026-10-31T11:00:00+09:00",
+  "match_keys": [
+    "2026-10-31T11:00|api:139|155",
+    "2026-10-31T11:00|덴버|피닉스"
+  ],
+  "staged_at": "2026-10-30 22:51"
+}

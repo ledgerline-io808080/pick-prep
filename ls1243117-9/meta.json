@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243117-9",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 골든스테이트 vs LA레이커스 핵심 정리",
+  "kickoff": "10/31(토) 11:00 KST",
+  "kickoff_kst": "2026-10-31T11:00:00+09:00",
+  "match_keys": [
+    "2026-10-31T11:00|LA레이커스|골든스테이트",
+    "2026-10-31T11:00|api:141|145"
+  ],
+  "staged_at": "2026-10-30 22:48"
+}

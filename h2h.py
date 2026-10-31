@@ -553,6 +553,41 @@ def npb_match(m, article_time=None):
     return _official_result(m, "NPB 공식", _pick_game(cands, base), "NPB", now)
 
 
+KOVO_ALIAS = {"soop": ["정관장", "kgc"], "한국도로공사": ["도로공사"], "ibk기업은행": ["기업은행"], "페퍼저축은행": ["페퍼"],
+              "한국전력": ["한전", "kepco"], "ok저축은행": ["okc", "읏맨"], "kb손해보험": ["kb"], "gs칼텍스": ["gs", "칼텍스"]}
+
+
+def _kovo_same(kname, article_name):
+    a = re.sub(r"\s+", "", article_name).lower()
+    for t in [re.sub(r"\s+", "", kname).lower()] + KOVO_ALIAS.get(re.sub(r"\s+", "", kname).lower(), []):
+        if len(t) >= 2 and t in a:
+            return True
+    return False
+
+
+def kovo_match(m, article_time=None):
+    """KOVO 공식 일정(user-api.kovo.co.kr)으로 V리그 경기 시간 확인. 오늘·가까운 경기 몇 개만 내려옴."""
+    now = datetime.datetime.now(KST)
+    base = (article_time or now).astimezone(KST)
+    r = requests.get("https://user-api.kovo.co.kr/mains/games/schedules", timeout=30,
+                     headers={"User-Agent": "Mozilla/5.0", "Origin": "https://kovo.co.kr"})
+    r.raise_for_status()
+    start, end = base - datetime.timedelta(days=1), base + datetime.timedelta(days=5)
+    cands = []
+    for g in r.json().get("payload") or []:
+        h, a = g["homeTeam"]["name"], g["awayTeam"]["name"]
+        ok = (_kovo_same(h, m["home"]) and _kovo_same(a, m["away"])) or (_kovo_same(h, m["away"]) and _kovo_same(a, m["home"]))
+        if not ok:
+            continue
+        hh, mi = g["startTime"].split(":")
+        y, mo, dd = map(int, g["gameDate"].split("-"))
+        cands.append(datetime.datetime(y, mo, dd, int(hh), int(mi), tzinfo=KST))
+    cands = [c for c in cands if start <= c <= end]
+    if not cands:
+        raise RuntimeError("KOVO 공식 일정에서 경기를 찾지 못함")
+    return _official_result(m, "KOVO 공식", _pick_game(cands, base), "V-리그", now)
+
+
 def main():
     global SPORT
     if "--sport" in sys.argv:
@@ -612,6 +647,12 @@ def main():
                             except Exception as e1b:
                                 print(f"  [NPB 공식 일정 없음] {e1b} → 네이버")
                                 stats, match = naver_match(m, article_time)
+                elif SPORT == "volleyball":  # 네이버가 안 되면 KOVO 공식 일정 (2026-10-31: 네이버 응답 없음으로 배구 글 막힘)
+                    try:
+                        stats, match = naver_match(m, article_time)
+                    except Exception as e0:
+                        print(f"  [네이버 실패] {e0} → KOVO 공식")
+                        stats, match = kovo_match(m, article_time)
                 else:
                     stats, match = naver_match(m, article_time)
             except Exception as e2:
@@ -621,7 +662,7 @@ def main():
                     print(f"  [실패] {m.get('home')} vs {m.get('away')}: {e2} / {e3}")
                     failed += 1
                     continue
-        if match.get("source") in ("MLB 공식 일정", "KBO 공식 일정", "NPB 공식 일정"):  # 공식 일정으로 찾은 경기는 네이버 종목 확인·경기 번호를 건너뜀
+        if str(match.get("source", "")).endswith("공식 일정"):  # 공식 일정으로 찾은 경기는 네이버 종목 확인·경기 번호를 건너뜀
             with open(os.path.join(folder, f"stats_{i}.json"), "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
             with open(os.path.join(folder, f"match_{i}.json"), "w", encoding="utf-8") as f:

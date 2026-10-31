@@ -18,6 +18,9 @@ BIG_EN = {("England", "Premier League"), ("Spain", "La Liga"), ("Germany", "Bund
           ("France", "Ligue 1"), ("World", "UEFA Champions League"), ("World", "UEFA Europa League"),
           ("World", "UEFA Europa Conference League"), ("World", "UEFA Conference League"),
           ("South-Korea", "K League 1"), ("Netherlands", "Eredivisie"), ("Portugal", "Primeira Liga")}
+# ESPN 리그 이름 (네이버가 안 될 때 ESPN 으로 경기를 찾은 경우, 2026-10-31)
+ESPN_BIG = {"English Premier League", "Laliga", "German Bundesliga", "Italian Serie A", "Ligue 1",
+            "Portuguese Primeira Liga", "Dutch Eredivisie", "Korean K League 1"}
 UEFA_EN = {"UEFA Champions League", "UEFA Europa League", "UEFA Europa Conference League", "UEFA Conference League"}
 # 손흥민·메시 소속팀 (이적하면 여기만 고침)
 STAR_TEAMS = {"lafc", "la fc", "로스앤젤레스fc", "로스엔젤레스fc", "losangelesfc",
@@ -47,6 +50,8 @@ def is_big_match(mk):
     if (mk.get("league_ko") or "") in BIG_NAMES:
         return True
     league, country = mk.get("league") or "", mk.get("country")
+    if mk.get("source") == "ESPN" and league in ESPN_BIG:
+        return True
     if league in UEFA_EN:
         return True  # UEFA 대회는 나라 정보가 비어 있어도 (API-Football 'None')
     if (country, league) in BIG_EN:

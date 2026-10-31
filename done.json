@@ -11095,8 +11095,8 @@
   "ls2544795": {
     "at": "2026-10-31 21:21",
     "board": "ls_soccer",
-    "status": "묶음 나눔 - 경기 0개",
-    "tries": 0,
+    "status": "가져오기 실패 - 건너뜀",
+    "tries": 1,
     "subs": [],
     "resplits": 0
   }

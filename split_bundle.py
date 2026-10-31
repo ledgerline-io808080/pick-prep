@@ -129,10 +129,11 @@ def main():
             print(f"  [건너뜀] {label}: 경기 시간을 확인하지 못한 경기")
             continue
         g = None
+        naver_err = False  # 네이버 응답 없음 (2026-10-31: 네이버 장애로 첼시-맨유 등 빅리그 14경기가 '리그 모름'으로 통째로 빠짐)
         try:
             g = h2h.naver_find({"home": m["home"], "away": m["away"]}, at)
         except Exception:
-            pass
+            naver_err = True
         if g:
             ko = datetime.datetime.fromisoformat(g["gameDateTime"]).replace(tzinfo=h2h.KST)
             if ko <= now:
@@ -141,10 +142,13 @@ def main():
             if any(f"naver:{x}" in posted for x in [g["gameId"]] + h2h.naver_replaced(g)):
                 print(f"  [건너뜀] {label}: 이미 올린 경기")
                 continue
-        if sport == "football" and not (is_big_naver(g) or star_game(m.get("home"), m.get("away"))):
+        hold = sport == "football" and naver_err and not g  # 리그 판정은 경기별 처리(API-Football·ESPN)에 맡김
+        if hold:
+            print(f"  [리그 확인 보류] {label}: 네이버 스포츠 응답 없음 → 경기별 글로 나눠 다음 단계에서 리그 확인")
+        elif sport == "football" and not (is_big_naver(g) or star_game(m.get("home"), m.get("away"))):
             print(f"  [건너뜀] {label}: 유럽 빅리그·손흥민·메시 경기가 아님 ({(g or {}).get('categoryName') or '리그 모름'})")
             continue  # 2026-10-23 축구는 유럽 빅리그 + 손흥민·메시 경기만
-        if not is_major(g, sport) and not (not g and major_by_title(art.get("title", ""), sport)):  # 잡리그 → 리그별 묶음
+        if not hold and not is_major(g, sport) and not (not g and major_by_title(art.get("title", ""), sport)):  # 잡리그 → 리그별 묶음
             league = (g or {}).get("categoryName") or src_league(seg) or src_league(lines[max(0, s - 2):s]) or "기타"
             groups.setdefault(league, []).append((label, seg))
             continue

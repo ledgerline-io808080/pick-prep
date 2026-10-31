@@ -34,10 +34,10 @@
   "요코하마 베이스타즈": "Yokohama DeNA BayStars",
   "KIA 타이거즈": "KIA Tigers",
   "LG 트윈스": "LG Twins",
-  "샬케": "FC Schalke 04",
+  "샬케": "Schalke 04",
   "마인츠": "Mainz 05",
   "브레멘": "SV Werder Bremen",
-  "파더보른": "Paderborn",
+  "파더보른": "SC Paderborn 07",
   "다렌영보이": "Dalian Yingbo",
   "선전 신펑청": "Shenzhen Xinpengcheng",
   "다롄영보이": "Dalian Yingbo",
@@ -338,7 +338,7 @@
   "갈라타사라이": "Galatasaray",
   "코모": "Como",
   "맨유": "Manchester United",
-  "레반테": "Levante UD",
+  "레반테": "Levante",
   "아스날": "Arsenal",
   "라이프치히": "RB Leipzig",
   "인터밀란": "Inter Milan",
@@ -571,5 +571,6 @@
   "전북현대": "Jeonbuk Hyundai Motors",
   "대전하나시티즌": "Daejeon Hana Citizen",
   "맨시티": "Manchester City",
-  "리즈": "Leeds United"
+  "리즈": "Leeds United",
+  "맨체스터Utd": "Manchester United"
 }

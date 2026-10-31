@@ -588,6 +588,56 @@ def kovo_match(m, article_time=None):
     return _official_result(m, "KOVO 공식", _pick_game(cands, base), "V-리그", now)
 
 
+KBL_HEADERS = {"teamcode": "XX", "lang": "ko", "channel": "WEB", "x-requested-with": "XMLHttpRequest",
+               "referer": "https://www.kbl.or.kr/", "user-agent": "Mozilla/5.0", "accept": "application/json, text/plain, */*"}
+
+
+def kbl_match(m, article_time=None):
+    """KBL 공식 일정(api.kbl.or.kr)으로 경기 시간 확인."""
+    now = datetime.datetime.now(KST)
+    base = (article_time or now).astimezone(KST)
+    start, end = base - datetime.timedelta(days=1), base + datetime.timedelta(days=5)
+    r = requests.get("https://api.kbl.or.kr/match/list", timeout=30, headers=KBL_HEADERS,
+                     params={"fromDate": start.strftime("%Y%m%d"), "toDate": end.strftime("%Y%m%d"), "tcodeList": "all"})
+    r.raise_for_status()
+    key = {k: re.sub(r"\s+", "", m[k]) for k in ("home", "away")}
+    cands = []
+    for g in r.json():
+        h, a = re.sub(r"\s+", "", g["tnameH"]), re.sub(r"\s+", "", g["tnameA"])
+        if not ((key["home"] in h and key["away"] in a) or (key["home"] in a and key["away"] in h)) or "취소" in str(g.get("gameStatus", "")):
+            continue
+        cands.append(datetime.datetime.strptime(g["gameDate"] + g["gameStart"], "%Y%m%d%H%M").replace(tzinfo=KST))
+    cands = [c for c in cands if start <= c <= end]
+    if not cands:
+        raise RuntimeError("KBL 공식 일정에서 경기를 찾지 못함")
+    return _official_result(m, "KBL 공식", _pick_game(cands, base), "KBL", now)
+
+
+def nba_match(m, article_time=None):
+    """NBA 일정(ESPN scoreboard)으로 경기 시간 확인. 영어 팀명 두 개가 모두 거의 같아야 인정."""
+    now = datetime.datetime.now(KST)
+    base = (article_time or now).astimezone(KST)
+    start, end = base - datetime.timedelta(days=1), base + datetime.timedelta(days=5)
+    cands = []
+    for k in range(-1, 6):  # ESPN 날짜는 미국 기준이라 하루 앞도 봄
+        day = (base + datetime.timedelta(days=k)).strftime("%Y%m%d")
+        r = requests.get("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", params={"dates": day}, timeout=30)
+        r.raise_for_status()
+        for e in r.json().get("events", []):
+            teams = [c["team"] for c in e["competitions"][0]["competitors"]]
+            if len(teams) != 2:
+                continue
+            for t1, t2 in ((teams[0], teams[1]), (teams[1], teams[0])):
+                h = max(name_score(m["home_en"].lower(), (t1.get(x) or "").lower()) for x in ("displayName", "shortDisplayName"))
+                a = max(name_score(m["away_en"].lower(), (t2.get(x) or "").lower()) for x in ("displayName", "shortDisplayName"))
+                if min(h, a) >= 0.8:
+                    cands.append(datetime.datetime.fromisoformat(e["date"].replace("Z", "+00:00")).astimezone(KST))
+    cands = [c for c in cands if start <= c <= end]
+    if not cands:
+        raise RuntimeError("NBA 일정(ESPN)에서 경기를 찾지 못함")
+    return _official_result(m, "NBA 일정(ESPN)", _pick_game(cands, base), "NBA", now)
+
+
 def main():
     global SPORT
     if "--sport" in sys.argv:
@@ -653,6 +703,16 @@ def main():
                     except Exception as e0:
                         print(f"  [네이버 실패] {e0} → KOVO 공식")
                         stats, match = kovo_match(m, article_time)
+                elif SPORT == "basketball":  # 네이버가 안 되면 KBL 공식 → NBA(ESPN) 일정
+                    try:
+                        stats, match = naver_match(m, article_time)
+                    except Exception as e0:
+                        print(f"  [네이버 실패] {e0} → KBL 공식")
+                        try:
+                            stats, match = kbl_match(m, article_time)
+                        except Exception as e1:
+                            print(f"  [KBL 공식 일정 없음] {e1} → NBA(ESPN)")
+                            stats, match = nba_match(m, article_time)
                 else:
                     stats, match = naver_match(m, article_time)
             except Exception as e2:

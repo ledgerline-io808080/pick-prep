@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243130-2",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[KBL] 안양 정관장 vs 수원KT 핵심 정리",
+  "kickoff": "10/31(토) 14:00 KST",
+  "kickoff_kst": "2026-10-31T14:00:00+09:00",
+  "match_keys": [
+    "2026-10-31T14:00|api:1102|3173",
+    "2026-10-31T14:00|수원KT|안양정관장"
+  ],
+  "staged_at": "2026-10-31 11:30"
+}

@@ -1,11 +1,11 @@
 {
-  "at": "2026-10-30 16:19",
+  "at": "2026-10-31 11:33",
   "rows": [
     {
-      "aid": "315533",
-      "board": "wonpoall",
-      "status": "다시 쓰기 실패",
-      "tries": 3,
+      "aid": "315797",
+      "board": "dolharbang",
+      "status": "대조 불일치",
+      "tries": 2,
       "title": ""
     }
   ]

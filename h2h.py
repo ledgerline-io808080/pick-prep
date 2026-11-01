@@ -197,16 +197,20 @@ def naver_games(upper, fr, to, category=None):
         params = {"fields": "basic,categoryId,categoryName", "upperCategoryId": upper, "fromDate": fr, "toDate": to, "size": 500}
         if category:
             params["categoryId"] = category
-        if _naver_down[0]:  # 네이버가 완전히 먹통이면 같은 실행에서 또 기다리지 않음 (2026-10-28 장애로 실행 시간 낭비)
+        if _naver_down[0] or _naver_flag_fresh():  # 네이버가 완전히 먹통이면 같은 실행에서 또 기다리지 않음 (2026-10-28 장애로 실행 시간 낭비)
             raise requests.exceptions.ConnectionError("네이버 스포츠 응답 없음 (이번 실행에서 이미 실패)")
-        for attempt in range(4):  # 서버에서 읽기 시간 초과가 가끔 나서 재시도 (2026-10-27 MLB 월드시리즈 글 막힘)
+        for attempt in range(3):  # 서버에서 읽기 시간 초과가 가끔 나서 재시도 (2026-10-27 MLB 월드시리즈 글 막힘)
             try:
-                r = requests.get(NAVER, params=params, timeout=45,
+                r = requests.get(NAVER, params=params, timeout=25,
                                  headers={"User-Agent": "Mozilla/5.0", "Referer": "https://m.sports.naver.com/"})
                 break
             except requests.exceptions.RequestException:
-                if attempt == 3:
+                if attempt == 2:
                     _naver_down[0] = True
+                    try:  # 다른 단계(별도 프로그램)도 20분 동안 기다리지 않게 표시 (2026-11-01)
+                        open(_NAVER_FLAG, "w").close()
+                    except OSError:
+                        pass
                     raise
                 time.sleep(3)
         _naver_cache[key] = r.json().get("result", {}).get("games", []) if r.ok else []
@@ -214,6 +218,14 @@ def naver_games(upper, fr, to, category=None):
 
 
 _naver_down = [False]
+_NAVER_FLAG = os.path.join(__import__("tempfile").gettempdir(), "naver_down.flag")
+
+
+def _naver_flag_fresh():
+    try:
+        return time.time() - os.path.getmtime(_NAVER_FLAG) < 1200
+    except OSError:
+        return False
 NAVER_ALIAS = {}
 _alias_path = os.path.join(HERE, "naver_alias.json")  # 원문 표기 → 네이버 표기 (예: 덴하흐 → ADO 덴 하그)
 if os.path.exists(_alias_path):

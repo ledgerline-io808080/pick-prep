@@ -28,12 +28,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PY = sys.executable
 DONE_PATH = os.path.join(HERE, "done.json")
 KST = datetime.timezone(datetime.timedelta(hours=9))  # 기록 시각은 한국 시간 (서버는 UTC)
+import time
+START = time.time()
+BUDGET = 90 * 60  # 실행 전체 제한: 넘으면 새 글 시작 안 하고 끝내서 완성된 글을 전달 (2026-11-01 prep 이 2시간 제한에 걸려 취소 반복)
 
 
 def run(args, label):
     print(f"\n▶ {label}")
     try:  # 한 단계가 멈춰서 실행 전체가 3시간 걸리는 일 방지 (2026-10-27)
-        r = subprocess.run([PY] + args, cwd=HERE, capture_output=True, text=True, timeout=1500)
+        left = max(60, int(BUDGET + 600 - (time.time() - START)))  # 남은 시간 안에서만 (전체 제한 + 10분 여유)
+        r = subprocess.run([PY] + args, cwd=HERE, capture_output=True, text=True, timeout=min(1500, left))
     except subprocess.TimeoutExpired:
         print(f"  [시간 초과 1500초] {args[:2]} → 실패 처리")
         return 1, "시간 초과"
@@ -639,6 +643,9 @@ def main():
         save_seen(seen)
         queue.sort(key=lambda x: (x[0], x[1]))  # 시각이 같으면 카페 먼저
         for t, _, board, aid in queue[:12]:
+            if time.time() - START > BUDGET:
+                print(f"\n[시간 제한 {BUDGET // 60}분] 남은 글은 다음 실행 때 처리")
+                break
             print(f"\n######## [{t}] {aid} → {board['name']} (스타일 {board.get('style', 'C')})")
             if aid.startswith("ls"):
                 for attempt in range(1, 3):  # 이미지 읽기가 어긋나면 바로 한 번 더

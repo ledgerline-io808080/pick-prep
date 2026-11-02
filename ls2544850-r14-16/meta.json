@@ -1,0 +1,13 @@
+{
+  "aid": "ls2544850-r14-16",
+  "board": "ls_soccer",
+  "sport": "football",
+  "title": "[MLS 프리뷰] LAFC vs 미네소타",
+  "kickoff": "11/2(월) 10:30 KST",
+  "kickoff_kst": "2026-11-02T10:30:00+09:00",
+  "match_keys": [
+    "2026-11-02T10:30|LAFC|미네소타",
+    "2026-11-02T10:30|api:1612|1616"
+  ],
+  "staged_at": "2026-11-02 10:27"
+}

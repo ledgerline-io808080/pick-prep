@@ -1,0 +1,13 @@
+{
+  "aid": "ls1243229-3",
+  "board": "ls_basketball",
+  "sport": "basketball",
+  "title": "[NBA] 올랜도 vs 워싱턴 핵심 정리",
+  "kickoff": "11/3(화) 09:30 KST",
+  "kickoff_kst": "2026-11-03T09:30:00+09:00",
+  "match_keys": [
+    "2026-11-03T09:30|api:153|161",
+    "2026-11-03T09:30|올랜도|워싱턴"
+  ],
+  "staged_at": "2026-11-02 23:04"
+}

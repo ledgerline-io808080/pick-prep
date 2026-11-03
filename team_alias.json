@@ -79,7 +79,7 @@
   "헐 시티": "Hull City",
   "맨체스터 시티": "Manchester City",
   "입스위치 타운": "Ipswich Town",
-  "비야레알": "Villarreal CF",
+  "비야레알": "Villarreal",
   "엘체": "Elche CF",
   "덴하흐": "ADO Den Haag",
   "에인트호벤": "PSV Eindhoven",
@@ -589,5 +589,11 @@
   "FC 알베르카": "FC Alverca",
   "길 비센테": "Gil Vicente",
   "비토리아 SC": "Vitória SC",
-  "바이에른뮌헨": "Bayern Munich"
+  "바이에른뮌헨": "Bayern Munich",
+  "FC바르셀로나": "FC Barcelona",
+  "애스턴빌라": "Aston Villa",
+  "보되/글림트": "Bodø/Glimt",
+  "릴 OSC": "Lille OSC",
+  "파리생제르맹": "Paris Saint-Germain",
+  "슬로반 브라티": "Slovan Bratislava"
 }

@@ -1,0 +1,12 @@
+{
+  "aid": "ls1722048",
+  "board": "ls_baseball",
+  "sport": "baseball",
+  "title": "[KBO 한국시리즈 1차전] KT vs 삼성 선발 매치업",
+  "kickoff": "11/3(화) 18:30 KST",
+  "kickoff_kst": "2026-11-03T18:30:00+09:00",
+  "match_keys": [
+    "2026-11-03T18:30|KT|삼성"
+  ],
+  "staged_at": "2026-11-03 10:23"
+}

@@ -362,6 +362,13 @@ def naver_match(m, article_time=None):
 
 
 ESPN_LEAGUE_KO = {"chinese-super-league": "중국 슈퍼리그"}
+# ESPN 리그 번호(경기 uid 의 l:번호) → (ESPN 영어 리그명, 한글 리그명). 영어명은 big_league.ESPN_BIG·UEFA_EN, 한글명은 BIG_NAMES 와 맞춤
+ESPN_LEAGUE_ID = {"700": ("English Premier League", "프리미어리그"), "740": ("Spanish LALIGA", "라리가"),
+                  "720": ("German Bundesliga", "분데스리가"), "730": ("Italian Serie A", "세리에A"),
+                  "710": ("French Ligue 1", "리그앙"), "725": ("Dutch Eredivisie", "에레디비시"),
+                  "715": ("Portuguese Primeira Liga", "프리메이라리가"), "775": ("UEFA Champions League", "UEFA 챔피언스리그"),
+                  "776": ("UEFA Europa League", "UEFA 유로파리그"), "20296": ("UEFA Conference League", "UEFA 컨퍼런스리그"),
+                  "3914": ("English League Championship", "잉글랜드 챔피언십")}
 
 
 def espn_match(m, article_time=None):
@@ -395,8 +402,12 @@ def espn_match(m, article_time=None):
     now = datetime.datetime.now(KST)
     label = f"{ko.month}/{ko.day}({WEEK[ko.weekday()]}) {ko:%H:%M} KST"
     slug = re.sub(r"^\d{4}(-\d{2})?-", "", e.get("season", {}).get("slug", ""))
-    league_en = slug.replace("-", " ").title()
-    league = ESPN_LEAGUE_KO.get(slug) or league_en
+    lid = (re.search(r"~l:(\d+)~", e.get("uid", "")) or [None, ""])[1]  # ESPN 경기 번호 안의 리그 번호 (시즌 이름만으론 리그를 몰라 챔스가 '챔피언쉽'으로 붙었음, 2026-11-04)
+    if lid in ESPN_LEAGUE_ID:
+        league_en, league = ESPN_LEAGUE_ID[lid]
+    else:
+        league_en = slug.replace("-", " ").title()
+        league = ESPN_LEAGUE_KO.get(slug) or league_en
     match = {"kickoff_kst": ko.isoformat(), "label": label, "league": league_en, "league_ko": league,
              "venue": None, "round": None, "source": "ESPN", "espn_game_id": e["id"]}
     if swapped:

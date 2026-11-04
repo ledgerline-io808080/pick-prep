@@ -91,6 +91,28 @@ def team_text(sec, name, role=None):
     return ""
 
 
+NAME_W = 380  # 팀명이 들어갈 수 있는 폭 (엠블럼 중심 ±190, 가운데 VS 원·별과 안 겹치게)
+
+
+def name_lines(d, name):
+    """팀명이 길면 글자 크기를 줄이고, 그래도 넘치면 두 줄로 나눠 (줄 목록, 글자 크기) 반환."""
+    for size in range(56, 39, -2):
+        if d.textlength(name, font=font(size)) <= NAME_W:
+            return [name], size
+    words = name.split(" ")
+    best = None
+    for k in range(1, len(words)):
+        a, b = " ".join(words[:k]), " ".join(words[k:])
+        w = max(d.textlength(a, font=font(46)), d.textlength(b, font=font(46)))
+        if best is None or w < best[0]:
+            best = (w, [a, b])
+    lines = best[1] if best else [name]
+    size = 46
+    while size > 24 and max(d.textlength(x, font=font(size)) for x in lines) > NAME_W:
+        size -= 2
+    return lines, size
+
+
 def make(post, idx, league, out):
     m = post["matches"][idx - 1]
     sec = sections(blocks(post["body"]).get(f"경기{idx}", post["body"]))
@@ -101,7 +123,7 @@ def make(post, idx, league, out):
     col_w = (W - PAD * 2 - 24) // 2
     lines = [wrap(tmp, t, f_body, col_w - 56) for t in texts]
     lh = 44
-    head_h = 290
+    head_h = 320
     col_h = 104 + max(len(x) for x in lines) * lh + 28
     H = head_h + col_h + PAD
 
@@ -126,9 +148,14 @@ def make(post, idx, league, out):
         logo = fit(logo, 96)  # 줄이기만 함 (확대 금지)
         canvas.alpha_composite(logo, (cx - logo.width // 2, 140 - logo.height // 2))
         d = ImageDraw.Draw(canvas)
-        d.text((cx, 214), name, font=font(56), fill=WHITE, anchor="mm")
+        nl, ns = name_lines(d, name)
+        if len(nl) == 1:
+            d.text((cx, 214), nl[0], font=font(ns), fill=WHITE, anchor="mm")
+        else:
+            d.text((cx, 204), nl[0], font=font(ns), fill=WHITE, anchor="mm")
+            d.text((cx, 204 + ns + 4), nl[1], font=font(ns), fill=WHITE, anchor="mm")
         if rec:
-            d.text((cx, 262), rec, font=font(32), fill=GOLD, anchor="mm")
+            d.text((cx, 290 if len(nl) > 1 else 262), rec, font=font(32), fill=GOLD, anchor="mm")
     d.ellipse((W // 2 - 58, 178 - 58, W // 2 + 58, 178 + 58), fill=(44, 33, 86), outline=FRAME, width=4)
     d.text((W // 2, 178), "VS", font=font(54), fill=FRAME, anchor="mm")
     for sx in (W // 2 - 110, W // 2 + 110):
@@ -142,9 +169,12 @@ def make(post, idx, league, out):
         cx = (x0 + x1) / 2
         d.rounded_rectangle((x0, y0, x1, y0 + col_h), radius=18, fill=PANEL, outline=(90, 74, 140), width=2)
         chip = f"{label} : {name}"
-        cw = d.textlength(chip, font=font(28)) + 60
+        cs = 28
+        while cs > 18 and d.textlength(chip, font=font(cs)) + 60 > col_w - 24:
+            cs -= 1
+        cw = d.textlength(chip, font=font(cs)) + 60
         d.rounded_rectangle((cx - cw / 2, y0 + 22, cx + cw / 2, y0 + 72), radius=14, fill=CHIP)
-        d.text((cx, y0 + 47), chip, font=font(28), fill=CHIP_TEXT, anchor="mm")
+        d.text((cx, y0 + 47), chip, font=font(cs), fill=CHIP_TEXT, anchor="mm")
         for j, ln in enumerate(ls):
             d.text((cx, y0 + 104 + j * lh + lh / 2), ln, font=f_body, fill=TEXT, anchor="mm")
 

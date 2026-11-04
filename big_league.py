@@ -4,6 +4,7 @@
 축구는 유럽 빅리그만 올림 (2026-10-23 GitHub 실행 시간 줄이기)
 - 5대 리그(프리미어리그·라리가·분데스리가·세리에A·리그앙) + UEFA 챔피언스리그·유로파리그·컨퍼런스리그
 - 추가(2026-10-23 ): K리그1·에레디비시·포르투갈(프리메이라리가)
+- 추가(2026-11-04 제프: 새 사이트는 글이 많아야 함): 아시아 챔피언스리그(엘리트)·챔피언스리그2
 - 예외: 손흥민(LAFC)·메시(인터 마이애미) 경기는 리그와 상관없이 올림
 - 농구·야구·배구는 영향 없음
 """
@@ -27,6 +28,12 @@ STAR_TEAMS = {"lafc", "la fc", "로스앤젤레스fc", "로스엔젤레스fc", "
               "인터마이애미", "인터마이애미cf", "intermiami", "intermiamicf"}
 
 
+def is_acl(s):
+    """AFC(아시아) 챔피언스리그 계열 이름인지 (한글·영문·네이버 이름 모두, 2026-11-04)"""
+    s = s or ""
+    return "아시아 챔피언스리그" in s or "AFC 챔피언스리그" in s or "AFC Champions" in s
+
+
 def _n(s):
     return re.sub(r"[\s.\-·]", "", (s or "")).lower()
 
@@ -40,14 +47,15 @@ def is_big_naver(g):
     """네이버 경기 정보(categoryId·categoryName)로 빅리그인지"""
     if not g:
         return False
-    return (g.get("categoryId") or "") in BIG_IDS or (g.get("categoryName") or "") in BIG_NAMES
+    return ((g.get("categoryId") or "") in BIG_IDS or (g.get("categoryName") or "") in BIG_NAMES
+            or is_acl(g.get("categoryName")))
 
 
 def is_big_match(mk):
     """h2h.py 가 만든 match_N.json 으로 빅리그인지 (네이버 한글 리그명 또는 API-Football 나라+리그)"""
     if not mk:
         return False
-    if (mk.get("league_ko") or "") in BIG_NAMES:
+    if (mk.get("league_ko") or "") in BIG_NAMES or is_acl(mk.get("league_ko")) or is_acl(mk.get("league")):
         return True
     league, country = mk.get("league") or "", mk.get("country")
     if mk.get("source") == "ESPN" and league in ESPN_BIG:
@@ -63,9 +71,9 @@ def is_big_match(mk):
 # 제목만 보고 읽기 전에 거르기 (2026-10-25 이미지 읽는 시간 줄이기, K리그1이 섞인 묶음은 놓쳐도 괜찮음)
 # 제목에 아래 비빅리그 이름이 있고 빅리그 이름이 하나도 없으면 읽지 않음. '해외축구'처럼 리그 이름이 없는 제목은 그대로 읽음.
 TITLE_OUT = ["J리그", "J1", "J2", "J /", "J/", "A리그", "호주", "중국", "SL", "MLS", "메이저리그사커", "K리그", "K /", "K/",
-             "사우디", "일본", "AFC", "아시안", "코파", "남미", "브라질", "아르헨", "멕시코", "터키", "러시아", "스코틀랜드"]
+             "사우디", "일본", "아시안", "코파", "남미", "브라질", "아르헨", "멕시코", "터키", "러시아", "스코틀랜드"]
 TITLE_BIG = ["프리미어", "EPL", "라리가", "분데스", "세리에", "리그앙", "리그 앙", "에레디", "프리메이라",
-             "포르투갈", "챔피언스", "챔스", "UCL", "유로파", "UEL", "컨퍼런스", "UECL", "해외축구", "유럽", "손흥민", "LAFC", "메시", "마이애미"]
+             "포르투갈", "챔피언스", "챔스", "AFC", "UCL", "유로파", "UEL", "컨퍼런스", "UECL", "해외축구", "유럽", "손흥민", "LAFC", "메시", "마이애미"]
 TITLE_BIG_RE = re.compile(r"(?<![A-Za-z])리그\s?1(?!\d)")  # '프랑스 리그1' 만 ('K리그 19경기'의 '리그 1'은 아님)
 
 

@@ -368,7 +368,9 @@ ESPN_LEAGUE_ID = {"700": ("English Premier League", "프리미어리그"), "740"
                   "710": ("French Ligue 1", "리그앙"), "725": ("Dutch Eredivisie", "에레디비시"),
                   "715": ("Portuguese Primeira Liga", "프리메이라리가"), "775": ("UEFA Champions League", "UEFA 챔피언스리그"),
                   "776": ("UEFA Europa League", "UEFA 유로파리그"), "20296": ("UEFA Conference League", "UEFA 컨퍼런스리그"),
-                  "3914": ("English League Championship", "잉글랜드 챔피언십")}
+                  "3914": ("English League Championship", "잉글랜드 챔피언십"),
+                  "3902": ("AFC Champions League Elite", "아시아 챔피언스리그"),
+                  "2466": ("AFC Champions League Two", "아시아 챔피언스리그2")}
 
 
 def espn_match(m, article_time=None):

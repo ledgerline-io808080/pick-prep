@@ -373,6 +373,13 @@ ESPN_LEAGUE_ID = {"700": ("English Premier League", "프리미어리그"), "740"
                   "2466": ("AFC Champions League Two", "아시아 챔피언스리그2")}
 
 
+# 영어 이름을 못 맞추는 낯선 유럽 대회 팀: 한글 이름 → ESPN 표기 (2026-11-05 제프: 유로파·컨퍼런스 누락 금지, 7경기가 시간 확인 실패로 막힘)
+KO_ESPN = {"즈베즈다": "Red Star Belgrade", "에스칼데스": "Inter D'Escaldes", "오르후스": "AGF", "브라가": "Braga",
+           "하포엘베르셰바": "Hapoel Be'er", "크레타": "OFI Crete", "코펜하겐": "F.C. København", "이베리아": "Iberia 1999",
+           "루가노": "FC Lugano", "카우노잘기리스": "Kauno Zalgiris", "크라이오바": "CSU Craiova", "에그나티아": "Egnatia",
+           "리가": "Riga FC", "야블로네츠": "Jablonec"}
+
+
 def espn_match(m, article_time=None):
     """ESPN 축구 일정으로 경기 시간 확인 (API-Football 한도 소진 + 네이버에 없는 리그, 2026-10-18 다른 출처로 확인하고 올림).
     영어 팀명 두 개가 모두 비슷해야 같은 경기. 맞대결 기록은 없음."""
@@ -381,6 +388,9 @@ def espn_match(m, article_time=None):
     start = (article_time or datetime.datetime.now(KST)).astimezone(KST)
     after = start - datetime.timedelta(hours=6)
     hits = []
+    m = dict(m)
+    for k_ko, k_en in (("home", "home_en"), ("away", "away_en")):
+        m[k_en] = KO_ESPN.get(re.sub(r"\s+", "", m.get(k_ko, "")), m.get(k_en) or "")
     for k in range(-1, 4):  # ESPN 날짜는 미국 기준이라 하루 앞도 봄
         day = (start + datetime.timedelta(days=k)).strftime("%Y%m%d")
         r = requests.get("https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard",

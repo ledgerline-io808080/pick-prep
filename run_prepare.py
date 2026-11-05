@@ -336,7 +336,7 @@ def process(aid, submit, done, board, reuse=False):
         for i, m in enumerate(post.get("matches", []), 1):
             mp = os.path.join(HERE, folder, f"match_{i}.json")
             mk = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else {}
-            if not (is_big_match(mk) or star_game(m.get("home"), m.get("away"), m.get("home_en"), m.get("away_en"))):
+            if not (is_big_match(mk) or is_uefa_title(post.get("title")) or star_game(m.get("home"), m.get("away"), m.get("home_en"), m.get("away_en"))):
                 result.update(status="빅리그 아님 - 게시 안 함", title=post.get("title", ""))
                 done[aid] = result
                 print(f"\n[{aid}] {m.get('home')} vs {m.get('away')} ({mk.get('league_ko') or mk.get('league') or '리그 모름'}): "

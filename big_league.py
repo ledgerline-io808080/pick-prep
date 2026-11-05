@@ -51,6 +51,13 @@ def is_big_naver(g):
             or is_acl(g.get("categoryName")))
 
 
+def is_uefa_title(t):
+    """제목의 리그명이 UEFA 유로파·컨퍼런스·챔피언스면 True (2026-11-05 제프: 유로파 경기 누락 금지 — 이름이 낯선 팀이라
+    경기 조회가 안 돼 '빅리그 아님'으로 빠지던 7경기)"""
+    t = t or ""
+    return any(w in t for w in ("유로파", "컨퍼런스")) or ("챔피언스" in t and "아시아" not in t and "AFC" not in t)
+
+
 def is_big_match(mk):
     """h2h.py 가 만든 match_N.json 으로 빅리그인지 (네이버 한글 리그명 또는 API-Football 나라+리그)"""
     if not mk:

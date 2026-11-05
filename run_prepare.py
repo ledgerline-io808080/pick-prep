@@ -16,7 +16,7 @@ run_pick.py
 처리 기록: done.json (글 번호별 결과)
 """
 import argparse
-from big_league import is_big_match, star_game
+from big_league import is_big_match, is_uefa_title, star_game
 import datetime
 import json
 import os

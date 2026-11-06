@@ -37,7 +37,7 @@ BASES = {"football": "https://v3.football.api-sports.io", "basketball": "https:/
 DONE_STATUS = {"FT", "AET", "PEN", "AOT"}  # 끝난 경기 (축구 연장·승부차기, 농구 연장 포함)
 
 
-API_OFF = False  # 계정 정지·키 없음이면 이번 실행에서는 API-Football 을 다시 부르지 않고 네이버·ESPN 으로 (2026-11-06)
+API_OFF = True  # 2026-11-06 제프: API-Football 계정 정지 → 아예 안 부르고 네이버·다음·ESPN 으로만. 다시 쓰려면 False
 
 
 def api(path, **params):

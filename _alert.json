@@ -1,12 +1,19 @@
 {
-  "at": "2026-11-06 13:06",
+  "at": "2026-11-06 14:12",
   "rows": [
     {
       "aid": "317053",
       "board": "dolharbang",
       "status": "경기 확인 실패 - 게시 안 함",
-      "tries": 7,
-      "title": "[NBA] 골든스테이트 vs 마이애미 히트 매치업"
+      "tries": 8,
+      "title": "[NBA] 골든스테이트 vs 마이애미 히트 핵심 정리"
+    },
+    {
+      "aid": "ls1243333",
+      "board": "ls_basketball",
+      "status": "경기 확인 실패 - 게시 안 함",
+      "tries": 2,
+      "title": "[KBL&WKBL 조합] 하나은행 vs KB스타즈 · 안양 정관장 vs 서울SK 핵심 정리"
     }
   ]
 }

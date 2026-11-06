@@ -123,7 +123,7 @@ def official_leagues(folder, post):
         mp = os.path.join(HERE, folder, f"match_{i}.json")
         mk = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else {}
         name = None
-        if mk.get("source") == "네이버 스포츠" or (mk.get("league_ko") and mk.get("league_ko") != mk.get("league")):
+        if mk.get("source") in ("네이버 스포츠", "다음 스포츠") or (mk.get("league_ko") and mk.get("league_ko") != mk.get("league")):
             name = mk.get("league_ko")
         if not name and mk.get("league"):
             name = LEAGUE_KO.get((mk.get("country"), mk["league"]))

@@ -37,7 +37,13 @@ BASES = {"football": "https://v3.football.api-sports.io", "basketball": "https:/
 DONE_STATUS = {"FT", "AET", "PEN", "AOT"}  # 끝난 경기 (축구 연장·승부차기, 농구 연장 포함)
 
 
+API_OFF = False  # 계정 정지·키 없음이면 이번 실행에서는 API-Football 을 다시 부르지 않고 네이버·ESPN 으로 (2026-11-06)
+
+
 def api(path, **params):
+    global API_OFF
+    if API_OFF:
+        raise RuntimeError("API-Football 사용 불가(계정 정지·키 없음)")
     key = os.environ.get("APIFOOTBALL_KEY") or open(KEY_PATH).read().strip()  # 서버는 환경변수
     for _ in range(3):
         r = requests.get(BASES[SPORT] + path, headers={"x-apisports-key": key}, params=params, timeout=30).json()
@@ -47,6 +53,8 @@ def api(path, **params):
             continue
         break
     if r.get("errors"):
+        if "suspended" in str(r["errors"]):
+            API_OFF = True
         raise RuntimeError(f"API 오류 {path}: {r['errors']}")
     return r.get("response", [])
 
@@ -191,7 +199,7 @@ NAVER_ONLY = {"volleyball", "baseball"}  # API-Sports 무료 키를 안 쓰고 �
 _naver_cache = {}
 
 
-def naver_games(upper, fr, to, category=None):
+def _naver_games(upper, fr, to, category=None):
     key = (upper, fr, to, category)
     if key not in _naver_cache:
         params = {"fields": "basic,categoryId,categoryName", "upperCategoryId": upper, "fromDate": fr, "toDate": to, "size": 500}
@@ -226,6 +234,107 @@ def _naver_flag_fresh():
         return time.time() - os.path.getmtime(_NAVER_FLAG) < 1200
     except OSError:
         return False
+# ---------------------------------------------------------------- 다음 스포츠 (2026-11-06 제프: 네이버가 안 되는 날은 다음으로)
+# 네이버 일정이 응답 없음이면 다음 스포츠 일정(공개 JSON)을 네이버 일정과 같은 모양으로 바꿔 돌려준다 → 아래 코드는 그대로 씀.
+# 다음 리그 코드: 축구 epl·primera·bundesliga·seriea·ligue1·eredivisie·mls·uefacl(챔스)·uefacup(유로파), 농구 nba·kbl·wkbl, 야구 mlb·kbo.
+# K리그·포르투갈·컨퍼런스리그·배구는 코드를 못 찾아 빠짐(기존대로 ESPN·KOVO 공식).
+DAUM = "https://sports.daum.net/api/arms/SPORTS_SCHEDULE"
+DAUM_LEAGUES = {"wfootball": ["epl", "primera", "bundesliga", "seriea", "ligue1", "eredivisie", "mls", "uefacl", "uefacup"],
+                "wbasketball": ["nba", "wkbl"], "kbasketball": ["kbl"], "wbaseball": ["mlb"], "kbaseball": ["kbo"]}
+DAUM_HISTORY_YEARS = 2  # 다음은 3개월씩 끊어 읽어야 해서 맞대결 기록은 최근 2년만
+_daum_cache = {}
+_used_daum = [False]  # 이번 실행에서 다음 스포츠 일정을 쓴 적 있는지(글 아래 출처 표기용)
+
+
+def _daum_seasons(code):
+    """다음 시즌 목록 [(seasonKey, 시작, 끝)] — 지난 시즌 일정은 seasonKey 가 있어야 나옴."""
+    key = ("seasons", code)
+    if key not in _daum_cache:
+        try:
+            r = requests.get(f"https://sports.daum.net/api/arms/GORAEBOB_SPORTS_SEASON_{code.upper()}", timeout=25,
+                             headers={"User-Agent": "Mozilla/5.0"})
+            fmt = lambda v: f"{v[:4]}-{v[4:6]}-{v[6:]}"
+            _daum_cache[key] = [(x["seasonKey"], datetime.date.fromisoformat(fmt(x["startDate"])),
+                                 datetime.date.fromisoformat(fmt(x["endDate"]))) for x in r.json()["document"]["list"]]
+        except Exception:
+            _daum_cache[key] = []
+    return _daum_cache[key]
+
+
+def _daum_get(code, fr, to, season=None):
+    for attempt in range(3):
+        try:
+            params = {"leagueCode": code, "fromDate": fr.replace("-", ""), "toDate": to.replace("-", "")}
+            if season:
+                params["seasonKey"] = season
+            r = requests.get(DAUM, params=params, timeout=25, headers={"User-Agent": "Mozilla/5.0"})
+            if r.ok:
+                return [g for day in ((r.json().get("document") or {}).get("schedule") or {}).values() for g in day]
+        except (requests.exceptions.RequestException, ValueError):
+            pass
+        time.sleep(2)
+    raise requests.exceptions.ConnectionError(f"다음 스포츠 응답 없음 ({code})")
+
+
+def _daum_game(g):
+    st = g.get("gameStatus", "")
+    t = (g.get("startTime") or "0000").zfill(4)
+    d = g["startDate"]
+    num = lambda v: int(v) if str(v or "").isdigit() else None
+    return {"gameId": f"daum{g['gameId']}", "gameDate": f"{d[:4]}-{d[4:6]}-{d[6:]}",
+            "gameDateTime": f"{d[:4]}-{d[4:6]}-{d[6:]}T{t[:2]}:{t[2:]}:00",
+            "statusCode": "RESULT" if st == "END" else "BEFORE" if st == "BEFORE" else "STARTED",
+            "cancel": any(k in st for k in ("CANCEL", "POSTPONE")),
+            "homeTeamName": g.get("homeTeamName", ""), "awayTeamName": g.get("awayTeamName", ""),
+            "homeTeamCode": str(g.get("homeTeamId")), "awayTeamCode": str(g.get("awayTeamId")),
+            "homeTeamScore": num(g.get("homeResult")), "awayTeamScore": num(g.get("awayResult")),
+            "homeTeamEmblemUrl": g.get("homeTeamImageUrl"), "awayTeamEmblemUrl": g.get("awayTeamImageUrl"),
+            "categoryId": g.get("leagueCode", "").lower(), "categoryName": g.get("leagueName", ""),
+            "winner": "HOME" if g.get("homeWlt") == "W" else "AWAY" if g.get("awayWlt") == "W" else None}
+
+
+def daum_games(upper, fr, to, category=None):
+    """네이버 naver_games 와 같은 모양의 경기 목록. 다음에 없는 종류면 None."""
+    codes = DAUM_LEAGUES.get(upper)
+    if category:
+        codes = [category] if category in (codes or []) else []
+    if not codes:  # 배구처럼 다음 코드를 모르는 종목은 None(원래 오류 그대로), 축구·농구·야구의 다른 종류(K리그 등)는 빈 목록
+        return [] if category or upper.endswith(("football", "basketball", "baseball")) else None
+    a, b = datetime.date.fromisoformat(fr), datetime.date.fromisoformat(to)
+    if category:  # 맞대결 기록(해 단위 요청) → 최근 2년까지만
+        a = max(a, datetime.date(b.year - DAUM_HISTORY_YEARS + 1, 1, 1))
+    out = []
+    for code in codes:
+        spans = [(None, a, b)]
+        if category:  # 맞대결 기록: 시즌마다 seasonKey 를 붙여 읽음
+            spans = [(k, max(a, st), min(b, en)) for k, st, en in _daum_seasons(code) if st <= b and en >= a]
+        for season, lo, hi in spans:
+            cur = lo
+            while cur <= hi:
+                end = min(cur + datetime.timedelta(days=89), hi)
+                key = (code, cur.isoformat(), end.isoformat(), season)
+                if key not in _daum_cache:
+                    _daum_cache[key] = _daum_get(code, cur.isoformat(), end.isoformat(), season)
+                out += [_daum_game(g) for g in _daum_cache[key]]
+                cur = end + datetime.timedelta(days=1)
+    return out
+
+
+def naver_games(upper, fr, to, category=None):
+    try:
+        return _naver_games(upper, fr, to, category)
+    except requests.exceptions.RequestException as e:
+        try:
+            games = daum_games(upper, fr, to, category)
+        except Exception as e2:
+            print(f"  [다음 스포츠도 실패] {e2}")
+            games = None
+        if games is None:
+            raise e
+        _used_daum[0] = True
+        print(f"  [네이버 응답 없음 → 다음 스포츠 일정 사용] {upper} {fr}~{to}")
+        return games
+
 NAVER_ALIAS = {}
 _alias_path = os.path.join(HERE, "naver_alias.json")  # 원문 표기 → 네이버 표기 (예: 덴하흐 → ADO 덴 하그)
 if os.path.exists(_alias_path):
@@ -318,7 +427,7 @@ def naver_match(m, article_time=None):
     ko = datetime.datetime.fromisoformat(g["gameDateTime"]).replace(tzinfo=KST)
     label = f"{ko.month}/{ko.day}({WEEK[ko.weekday()]}) {ko:%H:%M} KST"
     match = {"kickoff_kst": ko.isoformat(), "label": label, "league": g["categoryName"],
-             "league_ko": g["categoryName"], "venue": None, "round": None, "source": "네이버 스포츠"}
+             "league_ko": g["categoryName"], "venue": None, "round": None, "source": "다음 스포츠" if _used_daum[0] else "네이버 스포츠"}
     if g["statusCode"] == "RESULT" or ko < now:
         match["finished"] = True
         if g["statusCode"] == "RESULT":
@@ -351,7 +460,7 @@ def naver_match(m, article_time=None):
     title = f"{m['home']} vs {m['away']}"
     stats = {
         "league": f"{title} · {match['label']}",
-        "basis": f"최근 맞대결 {len(rows)}경기({g['categoryName']}) · 출처 네이버 스포츠" if rows else "최근 맞대결 기록 없음 · 출처 네이버 스포츠",
+        "basis": f"최근 맞대결 {len(rows)}경기({g['categoryName']}) · 출처 {match['source']}" if rows else f"최근 맞대결 기록 없음 · 출처 {match['source']}",
         "home": {"name": m["home"], "logo": m["home_en"]},
         "away": {"name": m["away"], "logo": m["away_en"]},
         "h2h": {"home_w": w, "d": d, "away_w": l, "label": f"{m['home']} 기준 {w}승 {d}무 {l}패"} if rows else None,
@@ -705,8 +814,8 @@ def main():
     combo = len(post.get("matches", [])) > 1
     for i, m in enumerate(post.get("matches", []), 1):
         try:
-            if SPORT in NAVER_ONLY:
-                raise RuntimeError("이 종목은 네이버 스포츠로 확인")
+            if SPORT in NAVER_ONLY or API_OFF:
+                raise RuntimeError("이 종목은 네이버 스포츠로 확인" if SPORT in NAVER_ONLY else "API-Football 사용 불가 → 네이버·ESPN")
             stats, match = one_match(m, post.get("league_label", ""), ids, article_time)
             if not match.get("kickoff_kst"):  # 팀을 잘못 찾아 경기가 없으면 네이버로 (2026-10-18 버그: 정관장을 다른 나라 팀으로 찾아 경기 시간 없음 → 게시 막힘)
                 raise RuntimeError("API-Sports 에서 이 경기를 찾지 못함")

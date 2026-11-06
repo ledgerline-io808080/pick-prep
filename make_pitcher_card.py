@@ -93,7 +93,7 @@ def make(data, out, home_en, away_en):
     d = column(canvas, d, W - 40 - col_w, W - 40, y0, data["away"], away_en, (190, 30, 50))
     d.ellipse((W / 2 - 34, y0 + 166, W / 2 + 34, y0 + 234), outline=LINE, width=3)
     d.text((W / 2, y0 + 200), "VS", font=font(30), fill=WHITE, anchor="mm")
-    d.text((W / 2, H - 34), f"출처 {data.get('source', 'MLB 공식 기록')} · 시즌 기록은 정규시즌 · PS = 포스트시즌",
+    d.text((W / 2, H - 34), "시즌 기록은 정규시즌 · PS = 포스트시즌",
            font=font(19, FONT_MEDIUM), fill=MUTED, anchor="mm")
 
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)

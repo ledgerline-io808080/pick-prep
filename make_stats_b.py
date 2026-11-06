@@ -140,7 +140,6 @@ def make(data, h2h, out):
     d.text((40, 44), data["title"], font=font(34), fill=INK, anchor="lm")
     d.text((40, 88), data.get("when", ""), font=font(22, MED), fill=SUB, anchor="lm")
     d.text((W - 40, 44), "팀 흐름", font=font(22), fill=HEAD, anchor="rm")
-    d.text((W - 40, 88), "출처 " + data.get("source", ""), font=font(18, MED), fill=SUB, anchor="rm")
 
     pw, gap, top = 548, 24, 130
     bottom = 0

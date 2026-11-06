@@ -102,7 +102,7 @@ def make(data, out):
 
     # 헤더: 리그 / 기준 / 팀
     d.text((40, 36), data.get("league", ""), font=font(30), fill=WHITE)
-    d.text((40, 78), data.get("basis", ""), font=font(22, MED), fill=MUTED)
+    d.text((40, 78), __import__("re").sub(r"\s*·?\s*(경기 시간 )?출처 .*$", "", data.get("basis", "")), font=font(22, MED), fill=MUTED)
     if data.get("sample"):
         tag = "디자인 시안 · 숫자는 예시"
         tw = d.textlength(tag, font=font(20))

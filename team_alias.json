@@ -114,7 +114,7 @@
   "AS로마": "AS Roma",
   "릴": "Lille",
   "스타드 브레스트": "Stade Brestois 29",
-  "스트라스부르": "RC Strasbourg",
+  "스트라스부르": "Strasbourg",
   "파리생제르망": "Paris Saint-Germain",
   "필라델피아": "Philadelphia 76ers",
   "샬럿": "Charlotte Hornets",
@@ -226,7 +226,7 @@
   "올림피크 리옹": "Olympique Lyonnais",
   "OGC 니스": "OGC Nice",
   "레알 마드리드": "Real Madrid",
-  "세비야": "Sevilla FC",
+  "세비야": "Sevilla",
   "FC 신시내티": "FC Cincinnati",
   "콜럼버스 크루": "Columbus Crew",
   "스타드 렌 FC": "Stade Rennais FC",
@@ -580,7 +580,7 @@
   "BNK썸": "BNK Sum",
   "앙제": "Angers SCO",
   "레체": "US Lecce",
-  "툴루즈": "Toulouse FC",
+  "툴루즈": "Toulouse",
   "뉴잉글랜드": "New England Revolution",
   "S.로테르담": "Sparta Rotterdam",
   "에버튼": "Everton",
@@ -635,5 +635,6 @@
   "즈베즈다": "Crvena Zvezda",
   "크레타": "AE Kreta",
   "릴레스트룀": "Lille",
-  "하나은행": "Hana Bank"
+  "하나은행": "Hana Bank",
+  "알바레스": "Alaves"
 }

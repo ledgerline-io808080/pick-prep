@@ -55,7 +55,7 @@
   "도르트문트": "Borussia Dortmund",
   "함부르크": "Hamburger SV",
   "슈투트가르트": "VfB Stuttgart",
-  "엘버스베르크": "Elversberg",
+  "엘버스베르크": "SV Elversberg",
   "아우크스부르크": "FC Augsburg",
   "버밍엄시티": "Birmingham City",
   "퀸즈 파크 레인저스": "Queens Park Rangers",
@@ -237,7 +237,7 @@
   "토트넘": "Tottenham Hotspur",
   "코번트리 시티": "Coventry City",
   "파르마": "Parma",
-  "토리노": "Torino",
+  "토리노": "Torino FC",
   "헤타페": "Getafe",
   "라요": "Rayo Vallecano",
   "라요바예카노": "Rayo Vallecano",
@@ -639,5 +639,6 @@
   "알바레스": "Alaves",
   "삼성생명": "Yongin Samsung Life Blueminx",
   "헐시티": "Hull City",
-  "스파르타": "Sparta Rotterdam"
+  "스파르타": "Sparta Rotterdam",
+  "US레체": "US Lecce"
 }

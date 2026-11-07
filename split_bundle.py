@@ -142,7 +142,7 @@ def main():
             if any(f"naver:{x}" in posted for x in [g["gameId"]] + h2h.naver_replaced(g)):
                 print(f"  [건너뜀] {label}: 이미 올린 경기")
                 continue
-        hold = sport == "football" and naver_err and not g  # 리그 판정은 경기별 처리(API-Football·ESPN)에 맡김
+        hold = sport == "football" and not g  # 네이버 응답 없음·네이버에 없는 팀 이름(빌럼II 등)은 리그 판정을 경기별 처리(ESPN)에 맡김 — 2026-11-07 에레디비시 빌럼II-즈볼레가 '리그 모름'으로 빠짐
         if hold:
             print(f"  [리그 확인 보류] {label}: 네이버 스포츠 응답 없음 → 경기별 글로 나눠 다음 단계에서 리그 확인")
         elif sport == "football" and not (is_big_naver(g) or star_game(m.get("home"), m.get("away"))):

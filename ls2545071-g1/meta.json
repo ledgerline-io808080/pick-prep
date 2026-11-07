@@ -1,0 +1,15 @@
+{
+  "aid": "ls2545071-g1",
+  "board": "ls_soccer",
+  "sport": "football",
+  "title": "[세리에A 2경기 프리뷰] 파르마 vs 볼로냐 · AS로마 vs 사수올로",
+  "kickoff": "11/8(일) 02:00 KST",
+  "kickoff_kst": "2026-11-08T02:00:00+09:00",
+  "match_keys": [
+    "2026-11-08T02:00|볼로냐|파르마",
+    "2026-11-08T04:45|AS로마|사수올로",
+    "naver:daum80107010",
+    "naver:daum80107011"
+  ],
+  "staged_at": "2026-11-07 22:25"
+}

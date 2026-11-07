@@ -240,7 +240,8 @@ def _naver_flag_fresh():
 # K리그·포르투갈·컨퍼런스리그·배구는 코드를 못 찾아 빠짐(기존대로 ESPN·KOVO 공식).
 DAUM = "https://sports.daum.net/api/arms/SPORTS_SCHEDULE"
 DAUM_LEAGUES = {"wfootball": ["epl", "primera", "bundesliga", "seriea", "ligue1", "eredivisie", "mls", "uefacl", "uefacup"],
-                "wbasketball": ["nba", "wkbl"], "kbasketball": ["kbl"], "wbaseball": ["mlb"], "kbaseball": ["kbo"]}
+                "wbasketball": ["nba", "wkbl"], "kbasketball": ["kbl"], "wbaseball": ["mlb"], "kbaseball": ["kbo"],
+                "kfootball": ["kl", "kl2"]}  # 2026-11-07 네이버 장애 때 K리그1 제주-광주가 '빅리그 아님'으로 빠짐 → 다음 스포츠 K리그1(kl)·K리그2(kl2) 추가
 DAUM_HISTORY_YEARS = 2  # 다음은 3개월씩 끊어 읽어야 해서 맞대결 기록은 최근 2년만
 _daum_cache = {}
 _used_daum = [False]  # 이번 실행에서 다음 스포츠 일정을 쓴 적 있는지(글 아래 출처 표기용)

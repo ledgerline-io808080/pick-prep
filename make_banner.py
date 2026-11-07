@@ -20,7 +20,10 @@ make_banner.py
 import argparse
 import io
 import json
+import hashlib
 import os
+import re
+import unicodedata
 import urllib.parse
 
 import requests
@@ -71,20 +74,66 @@ def save_alias(alias):
         json.dump(alias, f, ensure_ascii=False, indent=2)
 
 
+PLACEHOLDER_HASH = "3af186b6bd671981c6af4e8bcdc8cb17"  # 'image not available' 회색 카메라 그림 (2026-11-07 제프: 팀 로고는 정확히 확인하고 올림)
+_GENERIC = {"fc", "sc", "cf", "afc", "ac", "as", "ssc", "us", "fk", "sk", "club", "football", "united", "city", "real", "sporting",
+            "de", "la", "el", "the", "town", "athletic", "atletico", "stade", "borussia", "sv", "tsg", "rb", "vfl", "vfb", "1"}
+
+
+def _tokens(name):
+    return {t for t in re.sub(r"[^a-z0-9 ]", " ", unicodedata.normalize("NFKD", name.lower()).encode("ascii", "ignore").decode()).split()
+            if t not in _GENERIC and len(t) > 2}
+
+
+def _img_hash(img):
+    return hashlib.md5(img.convert("RGBA").tobytes()).hexdigest()
+
+
+def _same_team_name(a, b):
+    ta, tb = _tokens(a), _tokens(b)
+    return bool(ta & tb) or re.sub(r"\W", "", a.lower()) == re.sub(r"\W", "", b.lower())
+
+
+def _logo_ok(name_en, img):
+    """회색 카메라 '이미지 없음' 그림이거나, 이미 저장된 다른 팀 로고와 똑같은 그림이면 안 씀 (엉뚱한 팀 로고 방지)."""
+    h = _img_hash(img)
+    if h == PLACEHOLDER_HASH:
+        return False
+    for f in os.listdir(LOGO_DIR):
+        if not f.endswith(".png") or f[:-4] == name_en:
+            continue
+        try:
+            other = Image.open(os.path.join(LOGO_DIR, f))
+        except Exception:
+            continue
+        if _img_hash(other) == h and not _same_team_name(name_en, f[:-4]):
+            return False
+    return True
+
+
 def get_logo(name_ko, name_en):
-    """로고 PNG(RGBA)를 돌려준다. 로고/<영어팀명>.png 에 저장해 두고 재사용."""
+    """로고 PNG(RGBA)를 돌려준다. 로고/<영어팀명>.png 에 저장해 두고 재사용.
+    검색으로 받을 때는 이름이 거의 같은 팀만 받고(첫 번째 결과 아무거나 X), 못 믿으면 오류를 내 글자 로고로 대체."""
     os.makedirs(LOGO_DIR, exist_ok=True)
     path = os.path.join(LOGO_DIR, f"{name_en}.png")
-    if not os.path.exists(path):
-        url = SEARCH_URL.format(urllib.parse.quote(name_en))
-        teams = requests.get(url, timeout=20).json().get("teams") or []
-        soccer = [t for t in teams if t.get("strSport") == "Soccer"] or teams
-        if not soccer:
-            raise RuntimeError(f"로고 검색 결과 없음: {name_en}")
-        badge = soccer[0].get("strBadge") or soccer[0].get("strTeamBadge")
-        Image.open(io.BytesIO(requests.get(badge, timeout=20).content)).convert("RGBA").save(path)
-        print(f"  로고 저장: {name_ko} → {path}")
-    return Image.open(path).convert("RGBA")
+    if os.path.exists(path):
+        img = Image.open(path).convert("RGBA")
+        if _img_hash(img) == PLACEHOLDER_HASH:
+            raise RuntimeError(f"로고가 '이미지 없음' 그림: {name_en}")
+        return img
+    url = SEARCH_URL.format(urllib.parse.quote(name_en))
+    teams = requests.get(url, timeout=20).json().get("teams") or []
+    soccer = [t for t in teams if t.get("strSport") == "Soccer"] or teams
+    want = re.sub(r"\W", "", name_en.lower())
+    exact = [t for t in soccer if re.sub(r"\W", "", (t.get("strTeam") or "").lower()) in (want, want + "fc", "fc" + want)]
+    if not exact:
+        raise RuntimeError(f"로고 검색 결과에 같은 이름의 팀이 없음: {name_en} ({[t.get('strTeam') for t in soccer[:3]]})")
+    badge = exact[0].get("strBadge") or exact[0].get("strTeamBadge")
+    img = Image.open(io.BytesIO(requests.get(badge, timeout=20).content)).convert("RGBA")
+    if not _logo_ok(name_en, img):
+        raise RuntimeError(f"로고가 '이미지 없음'이거나 다른 팀 로고와 같은 그림: {name_en}")
+    img.save(path)
+    print(f"  로고 저장: {name_ko} → {path}")
+    return img
 
 
 def placeholder(name_ko, color):

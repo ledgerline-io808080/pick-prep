@@ -19006,5 +19006,63 @@
     "tries": 1,
     "subs": [],
     "resplits": 0
+  },
+  "317325": {
+    "at": "2026-11-07 12:00",
+    "board": "shotdol",
+    "tries": 1,
+    "status": "빅리그 아님 - 게시 안 함",
+    "title": "[K리그 조합 프리뷰] 제주SKFC vs 광주FC"
+  },
+  "317327": {
+    "at": "2026-11-07 12:02",
+    "board": "nongdal",
+    "status": "묶음 나눔 - 경기 3개",
+    "tries": 0,
+    "subs": [
+      "317327-1",
+      "317327-2",
+      "317327-3"
+    ],
+    "resplits": 0
+  },
+  "317327-1": {
+    "at": "2026-11-07 12:02",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-07T14:00|DB|삼성",
+      "naver:daum80109237"
+    ],
+    "kickoff": "11/7(토) 14:00 KST",
+    "kickoff_kst": "2026-11-07T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] DB vs 삼성 핵심 정리"
+  },
+  "317327-2": {
+    "at": "2026-11-07 12:02",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-07T14:00|LG|소노",
+      "naver:daum80109236"
+    ],
+    "kickoff": "11/7(토) 14:00 KST",
+    "kickoff_kst": "2026-11-07T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] LG vs 소노 핵심 정리"
+  },
+  "317327-3": {
+    "at": "2026-11-07 12:03",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-07T16:30|KT|가스공사",
+      "naver:daum80109238"
+    ],
+    "kickoff": "11/7(토) 16:30 KST",
+    "kickoff_kst": "2026-11-07T16:30:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] KT vs 가스공사 핵심 정리"
   }
 }

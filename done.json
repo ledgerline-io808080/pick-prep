@@ -19755,5 +19755,56 @@
     "tries": 0,
     "subs": [],
     "resplits": 0
+  },
+  "317609": {
+    "at": "2026-11-08 11:33",
+    "board": "nongdal",
+    "status": "묶음 나눔 - 경기 3개",
+    "tries": 0,
+    "subs": [
+      "317609-1",
+      "317609-2",
+      "317609-3"
+    ],
+    "resplits": 0
+  },
+  "317609-1": {
+    "at": "2026-11-08 11:33",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-08T14:00|모비스|정관장",
+      "naver:daum80109240"
+    ],
+    "kickoff": "11/8(일) 14:00 KST",
+    "kickoff_kst": "2026-11-08T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] 모비스 vs 정관장 핵심 정리"
+  },
+  "317609-2": {
+    "at": "2026-11-08 11:34",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-08T14:00|DB|SK",
+      "naver:daum80109239"
+    ],
+    "kickoff": "11/8(일) 14:00 KST",
+    "kickoff_kst": "2026-11-08T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] SK vs DB 핵심 정리"
+  },
+  "317609-3": {
+    "at": "2026-11-08 11:34",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-08T16:30|KCC|LG",
+      "naver:daum80109241"
+    ],
+    "kickoff": "11/8(일) 16:30 KST",
+    "kickoff_kst": "2026-11-08T16:30:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] LG vs KCC 핵심 정리"
   }
 }

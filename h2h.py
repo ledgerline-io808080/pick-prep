@@ -487,7 +487,9 @@ ESPN_LEAGUE_ID = {"700": ("English Premier League", "프리미어리그"), "740"
 KO_ESPN = {"즈베즈다": "Red Star Belgrade", "에스칼데스": "Inter D'Escaldes", "오르후스": "AGF", "브라가": "Braga",
            "하포엘베르셰바": "Hapoel Be'er", "크레타": "OFI Crete", "코펜하겐": "F.C. København", "이베리아": "Iberia 1999",
            "루가노": "FC Lugano", "카우노잘기리스": "Kauno Zalgiris", "크라이오바": "CSU Craiova", "에그나티아": "Egnatia",
-           "리가": "Riga FC", "야블로네츠": "Jablonec", "빌럼II": "Willem II", "즈볼레": "PEC Zwolle"}
+           "리가": "Riga FC", "야블로네츠": "Jablonec", "빌럼II": "Willem II", "즈볼레": "PEC Zwolle",
+           "비제우": "Académico de Viseu", "나시오날": "C.D. Nacional", "에스트렐라": "Estrela", "마리티무": "Maritimo", "히우아브": "Rio Ave",
+           "산타클라라": "Santa Clara", "아로카": "Arouca", "에스토릴": "Estoril", "파물리캉": "FC Famalicao", "비토리아기마랑이스": "Vitória de Guimaraes"}
 
 
 def espn_match(m, article_time=None):

@@ -20708,5 +20708,13 @@
     "tries": 1,
     "status": "빅리그 아님 - 게시 안 함",
     "title": "[NBA 조합 프리뷰] 애틀랜타 vs LA레이커스 · 디트로이트 vs 워싱턴"
+  },
+  "ls1243436": {
+    "at": "2026-11-09 22:58",
+    "board": "ls_basketball",
+    "status": "묶음 나눔 - 경기 0개",
+    "tries": 0,
+    "subs": [],
+    "resplits": 0
   }
 }

@@ -20686,5 +20686,20 @@
     "tries": 0,
     "subs": [],
     "resplits": 0
+  },
+  "ls1243414": {
+    "at": "2026-11-09 11:59",
+    "board": "ls_basketball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-09T19:00|KB스타즈|우리은행",
+      "2026-11-09T19:00|서울삼성|수원KT",
+      "naver:daum80109242",
+      "naver:daum80110881"
+    ],
+    "kickoff": "11/9(월) 19:00 KST",
+    "kickoff_kst": "2026-11-09T19:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL·WKBL 조합] 서울삼성 vs 수원KT · KB스타즈 vs 우리은행 핵심 정리"
   }
 }

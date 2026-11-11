@@ -20976,5 +20976,18 @@
     "kickoff_kst": "2026-11-11T13:00:00+09:00",
     "status": "전달 완료",
     "title": "[NBA] 포틀랜드 vs 오클라호마시티 썬더 핵심 정리"
+  },
+  "318050": {
+    "at": "2026-11-11 12:35",
+    "board": "nongdal",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-11T19:00|LG|SK",
+      "naver:daum80109244"
+    ],
+    "kickoff": "11/11(수) 19:00 KST",
+    "kickoff_kst": "2026-11-11T19:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL] LG vs SK 핵심 정리"
   }
 }

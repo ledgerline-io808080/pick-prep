@@ -20989,5 +20989,19 @@
     "kickoff_kst": "2026-11-11T19:00:00+09:00",
     "status": "전달 완료",
     "title": "[KBL] LG vs SK 핵심 정리"
+  },
+  "318068": {
+    "at": "2026-11-11 13:40",
+    "board": "shotdol",
+    "tries": 1,
+    "status": "빅리그 아님 - 게시 안 함",
+    "title": "[J리그컵 프리뷰] 우라와R vs C오사카"
+  },
+  "ls1243489": {
+    "at": "2026-11-11 13:42",
+    "board": "ls_basketball",
+    "tries": 1,
+    "status": "경기 수 많음 - 게시 안 함",
+    "title": "[KBL·WKBL·슈퍼리그 조합] 창원LG vs 서울SK · 신한은행 vs 삼성생명 · 부산KCC vs 뉴 타이베이 킹스 핵심 정리"
   }
 }

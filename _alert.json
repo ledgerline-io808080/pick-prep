@@ -1,12 +1,12 @@
 {
-  "at": "2026-11-13 07:30",
+  "at": "2026-11-13 13:09",
   "rows": [
     {
-      "aid": "318337",
-      "board": "dolharbang",
+      "aid": "ls1722166",
+      "board": "ls_baseball",
       "status": "경기 확인 실패 - 게시 안 함",
-      "tries": 8,
-      "title": "[NBA] 디트로이트 피스톤스 vs 워싱턴 위저즈 선발 매치업"
+      "tries": 2,
+      "title": "[APBC] 호주 vs 대만 · 일본 vs 대한민국 조합 선발 매치업"
     }
   ]
 }

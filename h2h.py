@@ -618,6 +618,33 @@ def _official_result(m, title_src, ko, league, now):
     return stats, match
 
 
+# 2026-11-13 제프: 아시아프로야구챔피언십(APBC, 도쿄돔)은 네이버·MLB·KBO·NPB 일정 어디에도 없어 글이 막힘 → 확인된 경기 시간표를 직접 둠.
+# 시간은 한국 시간(일본과 같음). 출처: 위키트리 2026-11-11 기사(한국 경기 12일 낮 12시 호주·13일 오후 7시 일본·14일 오후 7시 대만).
+# 한국이 안 나오는 경기(일본-대만·일본-호주·호주-대만)와 15일 결승·3위전은 시간을 못 찾아 넣지 않음 → 그 글은 계속 게시 안 함.
+APBC_TEAMS = {"대한민국": "KOR", "한국": "KOR", "일본": "JPN", "대만": "TPE", "호주": "AUS"}
+APBC_GAMES = {frozenset(("KOR", "AUS")): (2026, 11, 12, 12, 0), frozenset(("KOR", "JPN")): (2026, 11, 13, 19, 0),
+              frozenset(("KOR", "TPE")): (2026, 11, 14, 19, 0)}
+
+
+def apbc_match(m, article_time=None):
+    """APBC(아시아프로야구챔피언십) 확인된 경기 시간표로 경기 시간 확인."""
+    now = datetime.datetime.now(KST)
+    codes = []
+    for k in ("home", "away"):
+        c = APBC_TEAMS.get(re.sub(r"\s+", "", m[k]))
+        if not c:
+            raise RuntimeError(f"APBC 팀이 아님: {m[k]}")
+        codes.append(c)
+    g = APBC_GAMES.get(frozenset(codes))
+    if not g:
+        raise RuntimeError("APBC 경기 시간표에 없는 경기 (시간을 확인하지 못함)")
+    ko = datetime.datetime(*g, tzinfo=KST)
+    base = (article_time or now).astimezone(KST)
+    if abs((ko - base).total_seconds()) > 36 * 3600:
+        raise RuntimeError("APBC 경기 날짜가 글 날짜와 맞지 않음")
+    return _official_result(m, "APBC 일정(위키트리)", ko, "APBC", now)
+
+
 def _pick_game(cands, base):
     """글이 올라온 시각 직후의 가장 빠른 경기(글이 올라오기 6시간 전까지는 인정), 없으면 가장 최근 경기.
     (지금 시각 기준으로 고르면 지난 글이 며칠 뒤 다른 경기로 잘못 이어짐)"""
@@ -842,8 +869,12 @@ def main():
                             try:
                                 stats, match = npb_match(m, article_time)
                             except Exception as e1b:
-                                print(f"  [NPB 공식 일정 없음] {e1b} → 네이버")
-                                stats, match = naver_match(m, article_time)
+                                print(f"  [NPB 공식 일정 없음] {e1b} → APBC 시간표")
+                                try:
+                                    stats, match = apbc_match(m, article_time)
+                                except Exception as e1c:
+                                    print(f"  [APBC 시간표 없음] {e1c} → 네이버")
+                                    stats, match = naver_match(m, article_time)
                 elif SPORT == "volleyball":  # 네이버가 안 되면 KOVO 공식 일정 (2026-10-31: 네이버 응답 없음으로 배구 글 막힘)
                     try:
                         stats, match = naver_match(m, article_time)

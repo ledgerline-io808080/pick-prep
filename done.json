@@ -22022,5 +22022,63 @@
     "kickoff_kst": "2026-11-14T16:30:00+09:00",
     "status": "전달 완료",
     "title": "[KBL] 삼성 vs 정관장 핵심 정리"
+  },
+  "ls1243598": {
+    "at": "2026-11-14 12:09",
+    "board": "ls_basketball",
+    "status": "묶음 나눔 - 경기 2개",
+    "tries": 0,
+    "subs": [
+      "ls1243598-3",
+      "ls1243598-4"
+    ],
+    "resplits": 0
+  },
+  "ls1243598-3": {
+    "at": "2026-11-14 12:09",
+    "board": "ls_basketball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-14T14:00|KB스타즈|삼성생명",
+      "naver:daum80110882"
+    ],
+    "kickoff": "11/14(토) 14:00 KST",
+    "kickoff_kst": "2026-11-14T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[WKBL] 삼성생명 vs KB스타즈 핵심 정리"
+  },
+  "ls1243598-4": {
+    "at": "2026-11-14 12:10",
+    "board": "ls_basketball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-14T16:00|신한은행|하나은행",
+      "naver:daum80110883"
+    ],
+    "kickoff": "11/14(토) 16:00 KST",
+    "kickoff_kst": "2026-11-14T16:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[WKBL] 하나은행 vs 신한은행 핵심 정리"
+  },
+  "ls1722179": {
+    "at": "2026-11-14 12:10",
+    "board": "ls_baseball",
+    "tries": 1,
+    "match_keys": [],
+    "status": "경기 확인 실패 - 게시 안 함",
+    "title": "[APBC] 호주 vs 일본 선발 매치업"
+  },
+  "ls241375": {
+    "at": "2026-11-14 12:11",
+    "board": "ls_volleyball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-14T14:00|대한항공|삼성화재",
+      "2026-11-14T16:00|GS칼텍스|SOOP수퍼스"
+    ],
+    "kickoff": "11/14(토) 14:00 KST",
+    "kickoff_kst": "2026-11-14T14:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[V-리그 남자·V-리그 여자 조합] 대한항공 vs 삼성화재 · GS칼텍스 vs SOOP 수퍼스 분석"
   }
 }

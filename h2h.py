@@ -623,7 +623,11 @@ def _official_result(m, title_src, ko, league, now):
 # 한국이 안 나오는 경기(일본-대만·일본-호주·호주-대만)와 15일 결승·3위전은 시간을 못 찾아 넣지 않음 → 그 글은 계속 게시 안 함.
 APBC_TEAMS = {"대한민국": "KOR", "한국": "KOR", "일본": "JPN", "대만": "TPE", "호주": "AUS"}
 APBC_GAMES = {frozenset(("KOR", "AUS")): (2026, 11, 12, 12, 0), frozenset(("KOR", "JPN")): (2026, 11, 13, 19, 0),
-              frozenset(("KOR", "TPE")): (2026, 11, 14, 19, 0)}
+              frozenset(("KOR", "TPE")): (2026, 11, 14, 19, 0),
+              # 2026-11-14 제프 요청: 한국이 안 나오는 예선 3경기 추가(출처: 톱스타뉴스·금강일보 대회 일정, 한국 시간)
+              frozenset(("JPN", "TPE")): (2026, 11, 12, 19, 0), frozenset(("TPE", "AUS")): (2026, 11, 13, 12, 0),
+              frozenset(("JPN", "AUS")): (2026, 11, 14, 12, 0)}
+# 15일 3·4위전(오전 11시 또는 낮 12시, 자료마다 다름)·결승(오후 7시)은 예선 순위가 끝나야 대진이 정해져 아직 넣지 않음 → 대진 확정 후 추가.
 
 
 def apbc_match(m, article_time=None):

@@ -39,7 +39,7 @@ PROMPT = """\
 {numbered}
 """
 
-from big_league import is_big_naver, star_game
+from big_league import is_big_naver, star_game, intl_ok
 
 GROUP_MAX = 6  # 잡리그 묶음 글 한 개에 최대 경기 수
 # 주요 리그 = 경기별로 따로 올림, 그 밖(잡리그)은 리그별 묶음 글 (2026-10-17 )
@@ -145,10 +145,11 @@ def main():
         hold = sport == "football" and not g  # 네이버 응답 없음·네이버에 없는 팀 이름(빌럼II 등)은 리그 판정을 경기별 처리(ESPN)에 맡김 — 2026-11-07 에레디비시 빌럼II-즈볼레가 '리그 모름'으로 빠짐
         if hold:
             print(f"  [리그 확인 보류] {label}: 네이버 스포츠 응답 없음 → 경기별 글로 나눠 다음 단계에서 리그 확인")
-        elif sport == "football" and not (is_big_naver(g) or star_game(m.get("home"), m.get("away"))):
+        elif sport == "football" and not (is_big_naver(g) or intl_ok(src_league(seg), m.get("home"), m.get("away")) or star_game(m.get("home"), m.get("away"))):
             print(f"  [건너뜀] {label}: 유럽 빅리그·손흥민·메시 경기가 아님 ({(g or {}).get('categoryName') or '리그 모름'})")
             continue  # 2026-10-23 축구는 유럽 빅리그 + 손흥민·메시 경기만
-        if not hold and not is_major(g, sport) and not (not g and major_by_title(art.get("title", ""), sport)):  # 잡리그 → 리그별 묶음
+        if not hold and not is_major(g, sport) and not (not g and major_by_title(art.get("title", ""), sport)) \
+                and not (sport == "football" and intl_ok(src_league(seg), m.get("home"), m.get("away"))):  # 네이션스리그·네이션스컵은 경기별 글  # 잡리그 → 리그별 묶음
             league = (g or {}).get("categoryName") or src_league(seg) or src_league(lines[max(0, s - 2):s]) or "기타"
             groups.setdefault(league, []).append((label, seg))
             continue

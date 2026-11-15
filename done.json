@@ -22436,5 +22436,28 @@
     "kickoff_kst": "2026-11-15T14:00:00+09:00",
     "status": "전달 완료",
     "title": "[V-리그 남자·V-리그 여자 조합] 우리카드 vs 현대캐피탈 · 현대건설 vs 한국도로공사 분석"
+  },
+  "ls1243639": {
+    "at": "2026-11-15 13:06",
+    "board": "ls_basketball",
+    "status": "묶음 나눔 - 경기 1개",
+    "tries": 0,
+    "subs": [
+      "ls1243639-2"
+    ],
+    "resplits": 0
+  },
+  "ls1243639-2": {
+    "at": "2026-11-15 13:06",
+    "board": "ls_basketball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-15T16:00|BNK썸|삼성생명",
+      "naver:daum80110884"
+    ],
+    "kickoff": "11/15(일) 16:00 KST",
+    "kickoff_kst": "2026-11-15T16:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[WKBL] 삼성생명 vs BNK썸 핵심 정리"
   }
 }

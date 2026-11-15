@@ -29,8 +29,7 @@ STAR_TEAMS = {"lafc", "la fc", "로스앤젤레스fc", "로스엔젤레스fc", "
 
 
 # 2026-11-15 제프: 축구 경기가 없는 휴식기엔 유럽·아프리카 대표팀 경기도 올림 — UEFA 네이션스리그 + 아프리카 네이션스컵(예선 포함).
-# 국제 친선경기·북중미(CONCACAF) 네이션스리그·오세아니아는 안 올림. 라이브스코어 제목·원문 리그 머리줄에 '네이션스컵'·'네이션스리그'가 있어야 하고,
-# 네이션스리그는 북중미 팀 이름이 하나라도 있으면 제외(라이브스코어가 같은 '네이션스리그'로 북중미 대회도 부름).
+# 국제 친선경기·오세아니아는 안 올림(북중미 대회는 2026-11-15 제프 요청으로 올림). 라이브스코어 제목·원문 리그 머리줄에 '네이션스컵'·'네이션스리그'가 있어야 하고,
 CONCACAF_WORDS = ["그레나다", "세인트", "버뮤다", "푸에르토리코", "도미니카", "과테말라", "캐나다", "퀴라소", "파나마", "아이티",
                   "미국", "자메이카", "멕시코", "온두라스", "코스타리카", "엘살바도르", "수리남", "트리니다드", "쿠바", "가이아나",
                   "니카라과", "벨리즈", "앤티가", "바베이도스", "케이맨", "몬트세랫", "아루바", "바하마", "앵귈라", "버진"]
@@ -39,7 +38,7 @@ CONCACAF_WORDS = ["그레나다", "세인트", "버뮤다", "푸에르토리코"
 def intl_ok(text, home="", away=""):
     """제목·리그 머리줄(text)이 유럽 네이션스리그(UEFA) 또는 아프리카 네이션스컵이면 True"""
     t = text or ""
-    if "친선" in t or "OFC" in t or "오세아니아" in t or "골드컵" in t or "CONCACAF" in t.upper() or "북중미" in t \
+    if "친선" in t or "OFC" in t or "오세아니아" in t or "골드컵" in t \
             or re.search(r"U-?\d{2}|청소년|유스", t):  # 청소년 대표팀 제외
         return False
     if "네이션스컵" in t or "아프리카" in t or "AFCON" in t.upper():
@@ -48,8 +47,7 @@ def intl_ok(text, home="", away=""):
     if "예선" in t or "월드컵" in t or "유로 20" in t or "유로2" in t:
         return True
     if "네이션스리그" in t:
-        names = [_n(home), _n(away)]
-        return not any(w in n for n in names for w in CONCACAF_WORDS)
+        return True  # 2026-11-15 제프: 북중미 네이션스리그도 올림
     return False
 
 

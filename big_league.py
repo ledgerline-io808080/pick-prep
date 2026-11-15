@@ -39,9 +39,13 @@ CONCACAF_WORDS = ["그레나다", "세인트", "버뮤다", "푸에르토리코"
 def intl_ok(text, home="", away=""):
     """제목·리그 머리줄(text)이 유럽 네이션스리그(UEFA) 또는 아프리카 네이션스컵이면 True"""
     t = text or ""
-    if "친선" in t or "OFC" in t or "오세아니아" in t or "골드컵" in t or "CONCACAF" in t.upper() or "북중미" in t:
+    if "친선" in t or "OFC" in t or "오세아니아" in t or "골드컵" in t or "CONCACAF" in t.upper() or "북중미" in t \
+            or re.search(r"U-?\d{2}|청소년|유스", t):  # 청소년 대표팀 제외
         return False
     if "네이션스컵" in t or "아프리카" in t or "AFCON" in t.upper():
+        return True
+    # 2026-11-15 제프: 빅리그 경기가 없을 때를 위해 월드컵·유로·아시안컵 등 대표팀 예선도 올림(친선경기만 제외)
+    if "예선" in t or "월드컵" in t or "유로 20" in t or "유로2" in t:
         return True
     if "네이션스리그" in t:
         names = [_n(home), _n(away)]

@@ -23609,5 +23609,13 @@
     "kickoff_kst": "2026-11-17T11:00:00+09:00",
     "status": "전달 완료",
     "title": "[NBA] 덴버 너겟츠 vs 피닉스 선즈 핵심 정리"
+  },
+  "ls1243703": {
+    "at": "2026-11-17 08:00",
+    "board": "ls_basketball",
+    "status": "묶음 나눔 - 경기 0개",
+    "tries": 0,
+    "subs": [],
+    "resplits": 0
   }
 }

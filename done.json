@@ -23973,5 +23973,13 @@
     "kickoff_kst": "2026-11-18T13:00:00+09:00",
     "status": "전달 완료",
     "title": "[NBA] LA레이커스 vs 샬럿 핵심 정리"
+  },
+  "319193": {
+    "at": "2026-11-18 00:05",
+    "board": "dolharbang",
+    "tries": 1,
+    "match_keys": [],
+    "status": "경기 확인 실패 - 게시 안 함",
+    "title": "[NBA] LA 레이커스 vs 샬럿 호네츠 선발 매치업"
   }
 }

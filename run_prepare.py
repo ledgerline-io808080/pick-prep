@@ -224,6 +224,11 @@ def is_bundle(aid):
     ap = os.path.join(HERE, "글", aid, "article.json")
     if not os.path.exists(ap):
         return False
+    try:  # 조합 글 중 일부 경기만 이미 올라가 '다시 나눔' 상태면 경기별로 나눔
+        if load_done().get(aid, {}).get("status") == "중복 경기 일부 - 다시 나눔":
+            return True
+    except Exception:
+        pass
     art = json.load(open(ap, encoding="utf-8"))
     n_title = max([int(x) for x in re.findall(r"(\d+)\s*경기", art.get("title", ""))] or [0])
     n_home = len(re.findall(r"(?m)^\s*HOME\s*[:：]", art.get("text", "")))
@@ -346,7 +351,7 @@ def process(aid, submit, done, board, reuse=False):
     # 같은 경기 중복 막기 (2026-10-17 ): 카페·라이브스코어 어디서든 이미 올린 경기면 게시 안 함 → 먼저 올라온 글만 올라감
     keys = match_keys(folder, post)
     posted = latest_posted_keys(done)
-    if dup_keys(keys, posted) and is_group(folder):
+    if dup_keys(keys, posted) and (is_group(folder) or len(post.get("matches", [])) > 1):  # 2경기 조합 중 한 경기만 이미 올라갔을 때도 남은 경기는 따로 올림 (2026-11-19 제프: MLS 시애틀 경기)
         # 잡리그 묶음: 이미 올린 경기만 빼고 다시 나눠 나머지는 올림 (2026-10-23 버그: 6경기 중 3경기가 다른 글로 올라가 나머지 3경기가 막힘)
         dups = [f"{m['home']} vs {m['away']}" for i, m in enumerate(post.get("matches", []), 1)
                 if dup_keys(match_keys(folder, post, only=i), posted)]

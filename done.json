@@ -24203,5 +24203,20 @@
     "kickoff_kst": "2026-11-19T12:00:00+09:00",
     "status": "전달 완료",
     "title": "[NBA] 새크라멘토 vs 피닉스 핵심 정리"
+  },
+  "ls1243783": {
+    "at": "2026-11-19 13:14",
+    "board": "ls_basketball",
+    "tries": 1,
+    "match_keys": [
+      "2026-11-19T19:00|부산KCC|안양정관장",
+      "2026-11-19T19:00|서울SK|수원KT",
+      "naver:daum80109256",
+      "naver:daum80109257"
+    ],
+    "kickoff": "11/19(목) 19:00 KST",
+    "kickoff_kst": "2026-11-19T19:00:00+09:00",
+    "status": "전달 완료",
+    "title": "[KBL 조합] 안양정관장 vs 부산KCC · 수원KT vs 서울SK 핵심 정리"
   }
 }

@@ -584,6 +584,15 @@ def main():
     if args.article:  # 특정 글: 예전처럼 게시판마다
         for board in boards:
             print(f"\n######## {board['name']} 게시판 (스타일 {board.get('style', 'C')})")
+            mp = os.path.join(HERE, "manual", args.article + ".json")  # 손으로 만든 원문(자동으로 못 나눈 조합 글의 한 경기 등, 2026-11-19 제프)
+            if os.path.exists(mp):
+                os.makedirs(os.path.join(HERE, "글", args.article), exist_ok=True)
+                import shutil
+                shutil.copy(mp, os.path.join(HERE, "글", args.article, "article.json"))
+                print(f"      + [{args.article}] 수동 원문 사용")
+                summary.append((args.article, process(args.article, args.submit, done, board, args.reuse)))
+                save_done(done)
+                continue
             if board.get("source") == "livescore":
                 code, out = run(["livescore_fetch.py", "--url", board["board_url"], "--author", board["author"],
                                  "--article", args.article.removeprefix("ls")], f"{board['name']} 글 가져오기")

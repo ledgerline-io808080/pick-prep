@@ -14,12 +14,12 @@ BIG_IDS = {"epl", "primera", "bundesliga", "seria", "ligue1", "champs", "europa"
            "kleague", "eredivisie", "portugal", "mls"}
 BIG_NAMES = {"프리미어리그", "라리가", "분데스리가", "세리에 A", "세리에A", "리그 1", "리그1", "리그앙",
              "챔피언스리그", "유로파리그", "컨퍼런스리그", "UEFA 챔피언스리그", "UEFA 유로파리그", "UEFA 컨퍼런스리그",
-             "K리그1", "에레디비시", "프리메이라리가", "메이저리그사커", "MLS"}
+             "K리그1", "에레디비시", "프리메이라리가", "메이저리그사커", "MLS", "잉글랜드 챔피언십", "챔피언십"}
 BIG_EN = {("England", "Premier League"), ("Spain", "La Liga"), ("Germany", "Bundesliga"), ("Italy", "Serie A"),
           ("France", "Ligue 1"), ("World", "UEFA Champions League"), ("World", "UEFA Europa League"),
           ("World", "UEFA Europa Conference League"), ("World", "UEFA Conference League"),
           ("South-Korea", "K League 1"), ("Netherlands", "Eredivisie"), ("Portugal", "Primeira Liga"),
-          ("USA", "Major League Soccer")}  # 2026-11-19 제프: MLS도 올림
+          ("USA", "Major League Soccer"), ("England", "Championship")}  # 2026-11-19 제프: MLS도 올림
 # ESPN 리그 이름 (네이버가 안 될 때 ESPN 으로 경기를 찾은 경우, 2026-10-31)
 ESPN_BIG = {"English Premier League", "Laliga", "German Bundesliga", "Italian Serie A", "Ligue 1",
             "Portuguese Primeira Liga", "Dutch Eredivisie", "Korean K League 1", "Major League Soccer", "MLS"}
@@ -46,6 +46,8 @@ def intl_ok(text, home="", away=""):
     if "친선" in t or "OFC" in t or "오세아니아" in t or "골드컵" in t \
             or re.search(r"U-?\d{2}|청소년|유스", t):  # 청소년 대표팀 제외
         return False
+    if ("챔피언쉽" in t or "챔피언십" in t) and not re.search(r"아시아|AFC|UEFA|K리그|클럽|월드|여자|U-?\d{2}", t):
+        return True  # 2026-11-22 제프: 잉글랜드 챔피언십도 올림
     if "MLS" in t.upper() or "메이저리그사커" in t:  # 2026-11-19 제프: MLS(플레이오프 포함)도 올림
         return True
     if "네이션스컵" in t or "아프리카" in t or "AFCON" in t.upper():
@@ -110,7 +112,7 @@ def is_big_match(mk):
 TITLE_OUT = ["J리그", "J1", "J2", "J /", "J/", "A리그", "호주", "중국", "SL", "MLS", "메이저리그사커", "K리그", "K /", "K/",
              "사우디", "일본", "아시안", "코파", "남미", "브라질", "아르헨", "멕시코", "터키", "러시아", "스코틀랜드"]
 TITLE_BIG = ["프리미어", "EPL", "라리가", "분데스", "세리에", "리그앙", "리그 앙", "에레디", "프리메이라",
-             "포르투갈", "챔피언스", "챔스", "AFC", "MLS", "메이저리그사커", "UCL", "유로파", "UEL", "컨퍼런스", "UECL", "해외축구", "유럽", "손흥민", "LAFC", "메시", "마이애미"]
+             "포르투갈", "챔피언스", "챔스", "AFC", "MLS", "메이저리그사커", "챔피언쉽", "챔피언십", "UCL", "유로파", "UEL", "컨퍼런스", "UECL", "해외축구", "유럽", "손흥민", "LAFC", "메시", "마이애미"]
 TITLE_BIG_RE = re.compile(r"(?<![A-Za-z])리그\s?1(?!\d)")  # '프랑스 리그1' 만 ('K리그 19경기'의 '리그 1'은 아님)
 
 

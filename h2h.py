@@ -506,9 +506,20 @@ def espn_match(m, article_time=None):
         m[k_en] = KO_ESPN.get(re.sub(r"\s+", "", m.get(k_ko, "")), m.get(k_en) or "")
     for k in range(-1, 4):  # ESPN 날짜는 미국 기준이라 하루 앞도 봄
         day = (start + datetime.timedelta(days=k)).strftime("%Y%m%d")
-        r = requests.get("https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard",
-                         params={"dates": day, "limit": 1000}, timeout=30).json()
-        for e in r.get("events", []):
+        evs, seen_ids = [], set()
+        for slug in ("all", "usa.1"):  # 2026-11-24: ESPN 'all' 에는 MLS(usa.1)가 없어 MLS 경기 시간을 못 찾았음(LAFC 경기)
+            try:
+                r = requests.get(f"https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard",
+                                 params={"dates": day, "limit": 1000}, timeout=30).json()
+            except Exception:
+                if slug == "all":
+                    raise
+                continue
+            for e in r.get("events", []):
+                if e.get("id") not in seen_ids:
+                    seen_ids.add(e.get("id"))
+                    evs.append(e)
+        for e in evs:
             teams = {c["homeAway"]: c["team"] for c in e["competitions"][0]["competitors"]}
             if "home" not in teams or "away" not in teams:
                 continue

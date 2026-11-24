@@ -501,6 +501,10 @@ def process(aid, submit, done, board, reuse=False):
         done[aid] = result
         return result
 
+    if images and post.get("pick"):  # 글 맨 아래 '추천 픽' 큰 막대 그림 (2026-11-25 제프) — 새 사이트가 글자 색·크기를 지워서 그림으로
+        code, _ = run(["make_pick_bar.py", "--pick", post["pick"], "--out", os.path.join(folder, "pick_bar.png")], f"[{aid}] 추천 픽 막대")
+        if code == 0:
+            images.append("pick_bar.png")
     post["images"] = images
     with open(os.path.join(HERE, folder, "post.json"), "w", encoding="utf-8") as f:
         json.dump(post, f, ensure_ascii=False, indent=2)

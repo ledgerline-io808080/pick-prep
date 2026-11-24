@@ -452,7 +452,7 @@ def process(aid, submit, done, board, reuse=False):
         elif board.get("chart") == "pitcher" and not (json.load(open(os.path.join(HERE, stats_json), encoding="utf-8")).get("h2h_matches")
                                                      if os.path.exists(os.path.join(HERE, stats_json)) else None):
             pass  # 야구: 공식 맞대결 기록이 없으면(NPB·KBO 등) 빈 차트는 안 넣음
-        elif os.path.exists(os.path.join(HERE, stats_json)):
+        elif os.path.exists(os.path.join(HERE, stats_json)) and (json.load(open(os.path.join(HERE, stats_json), encoding="utf-8")).get("h2h_matches")):  # 맞대결 기록이 없으면 빈 차트는 안 넣음 (2026-11-25 제프)
             code, _ = run(["make_stats.py", "--data", stats_json, "--out", os.path.join(folder, f"stats_{i}.png")],
                           f"[{aid}] 경기 {i} 상대 전적 차트")
             if code == 0:

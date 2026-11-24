@@ -75,6 +75,22 @@ def main():
         mk = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else {}
         g = game_info(mk["naver_game_id"]) if mk.get("naver_game_id") else None
         if not g:
+            # 2026-11-25 제프: 차트가 비는 경기는 ESPN 경기 결과로 대신 (네이버가 서버에서 응답이 없을 때 대표팀·MLS 등)
+            if sport == "football" and mk.get("kickoff_kst") and m.get("home_en") and m.get("away_en"):
+                try:
+                    import espn_form
+                    hr = espn_form.recent_games(espn_form.team_id(m["home_en"]), mk["kickoff_kst"])
+                    ar = espn_form.recent_games(espn_form.team_id(m["away_en"]), mk["kickoff_kst"])
+                    if len(hr) >= 3 and len(ar) >= 3:
+                        data = {"title": f"{m['home']} vs {m['away']}", "when": mk.get("label", ""), "source": "ESPN 경기 결과",
+                                "home": {"name": m["home"], "logo": m.get("home_en", ""), "recent": hr},
+                                "away": {"name": m["away"], "logo": m.get("away_en", ""), "recent": ar}}
+                        with open(os.path.join(folder, f"flow_{i}.json"), "w", encoding="utf-8") as f:
+                            json.dump(data, f, ensure_ascii=False, indent=2)
+                        print(f"  {data['title']}: 최근 {len(hr)}·{len(ar)}경기 (ESPN)")
+                        continue
+                except Exception as e:
+                    print(f"  [ESPN 팀 흐름 실패] 경기 {i}: {str(e)[:80]}")
             print(f"  [팀 흐름 없음] 경기 {i}: 네이버 경기 정보를 찾지 못함")
             continue
         hc, ac = g["homeTeamCode"], g["awayTeamCode"]

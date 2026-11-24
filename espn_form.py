@@ -17,6 +17,12 @@ def _norm(s):
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
 
+def _ascii(t):
+    """é·ü 같은 악센트 글자는 차트 글꼴에서 네모로 나와 기본 글자로 바꿈"""
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFKD", t or "") if not unicodedata.combining(c))
+
+
 def team_id(name_en):
     """영어 팀명으로 ESPN 팀 번호. 같은 이름이 여럿(여자팀·21세 이하)이면 맨 앞 남자 1군."""
     key = ("id", name_en)
@@ -42,13 +48,13 @@ def team_id(name_en):
     return _cache[key]
 
 
-def last5(team, before_iso):
-    """before_iso(경기 시작 시각) 전에 끝난 경기 중 최근 5개 → ['W','D','L', ...] 오래된 순.
+def recent_games(team, before_iso, n=5):
+    """before_iso 전에 끝난 최근 n경기 상세 → [{"date":"11.21","pf":2,"pa":1,"result":"승|무|패","opp":"상대(영어)","home":True}] 오래된 순.
     ESPN 전체 일정(all)과 그 팀 대표 리그 일정을 합쳐 본다(MLS 등은 all 에 없음). 가장 최근 경기가 3주보다 오래됐으면 '최근'이 아니라 빈 목록."""
     tid, lg = team
     if not tid:
         return []
-    key = ("form", tid, before_iso)
+    key = ("games", tid, before_iso, n)
     if key in _cache:
         return _cache[key]
     out = []
@@ -56,6 +62,7 @@ def last5(team, before_iso):
         before = datetime.datetime.fromisoformat(before_iso)
         if before.tzinfo is None:
             before = before.replace(tzinfo=datetime.timezone.utc)
+        kst = datetime.timezone(datetime.timedelta(hours=9))
         seen, rows = set(), []
         for slug in ("all", lg):
             if not slug:
@@ -84,14 +91,22 @@ def last5(team, before_iso):
                     return int(float(v))
                 a, b = sc(me[0]), sc(op[0])
                 seen.add(e.get("id"))
-                rows.append((ko, "W" if a > b else ("L" if a < b else "D")))
-        rows.sort()
+                rows.append((ko, {"date": ko.astimezone(kst).strftime("%m.%d"), "pf": a, "pa": b,
+                                  "result": "승" if a > b else ("패" if a < b else "무"),
+                                  "opp": _ascii(op[0]["team"].get("shortDisplayName") or op[0]["team"].get("displayName", "")),
+                                  "home": me[0].get("homeAway") == "home"}))
+        rows.sort(key=lambda r: r[0])
         if rows and (before - rows[-1][0]) <= datetime.timedelta(days=21):
-            out = [r for _, r in rows[-5:]]
+            out = [r for _, r in rows[-n:]]
     except Exception:
         out = []
     _cache[key] = out
     return out
+
+
+def last5(team, before_iso):
+    """['W','D','L', ...] 오래된 순 (배너 칩용)"""
+    return [{"승": "W", "무": "D", "패": "L"}[g["result"]] for g in recent_games(team, before_iso)]
 
 
 def forms(home_en, away_en, before_iso):

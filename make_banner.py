@@ -162,7 +162,30 @@ def paste_logo(canvas, logo, cx, cy, box):
     canvas.alpha_composite(logo, (cx - logo.width // 2, cy - logo.height // 2))
 
 
-def make(home, away, league, pick, out, home_en=None, away_en=None):
+RED = (196, 40, 28)
+FORM_COLOR = {"W": (34, 197, 94), "D": (140, 150, 168), "L": (239, 68, 68)}
+FORM_TEXT = {"W": "승", "D": "무", "L": "패"}
+
+
+def fit_font(d, text, size, max_w, weight=FONT_BOLD, min_size=24):
+    """글자가 max_w 보다 넓으면 줄여서 맞춤"""
+    while size > min_size and d.textlength(text, font=font(size, weight)) > max_w:
+        size -= 2
+    return font(size, weight)
+
+
+def form_chips(d, cx, cy, form, r=19, gap=10):
+    n = len(form)
+    x = cx - (n * 2 * r + (n - 1) * gap) // 2 + r
+    for f in form:
+        d.ellipse((x - r, cy - r, x + r, cy + r), fill=FORM_COLOR[f])
+        d.text((x, cy), FORM_TEXT[f], font=font(20), fill=(255, 255, 255), anchor="mm")
+        x += 2 * r + gap
+
+
+def make(home, away, league, pick, out, home_en=None, away_en=None, kickoff="", home_form=None, away_form=None):
+    """2026-11-25 제프: 레드 헤더형(A). 위 빨간 띠(리그·경기 시각, 왼쪽은 등록 쪽이 사이트 배지를 얹을 자리),
+    두 팀 로고·이름, 최근 5경기 칩(자료가 있을 때만), 빨간 추천 알약."""
     alias = load_alias()
     if home_en:
         alias[home] = home_en
@@ -180,38 +203,44 @@ def make(home, away, league, pick, out, home_en=None, away_en=None):
             print(f"  [로고 없음] {name}: {e} → 기본 동그라미로 대체")
             logos.append(placeholder(name, color))
 
-    canvas = Image.new("RGBA", (W, H))
+    home_form, away_form = home_form or [], away_form or []
+    has_form = bool(home_form and away_form)
+
+    canvas = Image.new("RGBA", (W, H), (12, 16, 28, 255))
     d = ImageDraw.Draw(canvas)
-    for y in range(H):  # 위→아래 그라데이션
+    for y in range(H):  # 본문 바탕: 아주 옅은 위→아래 그라데이션
         t = y / (H - 1)
-        d.line([(0, y), (W, y)], fill=tuple(int(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM)))
+        d.line([(0, y), (W, y)], fill=tuple(int(a + (b - a) * t) for a, b in zip((14, 19, 33), (8, 11, 20))))
 
-    # 배지는 여기서 넣지 않음 (공개 쪽 코드에는 사이트 표시 없음, 등록 쪽에서 얹음)
+    # 위 빨간 띠 (왼쪽은 비워 둠: 배지는 등록 쪽에서 얹음)
+    d.rectangle((0, 0, W, 96), fill=RED + (255,))
+    d.text((W // 2, 48), league, font=fit_font(d, league, 34, 560), fill=(255, 255, 255), anchor="mm")
+    if kickoff:
+        d.text((W - 36, 48), kickoff, font=fit_font(d, kickoff, 26, 300, FONT_MEDIUM), fill=(255, 236, 230), anchor="rm")
 
-    # 상단 리그 라벨
-    d.text((W // 2, 62), league, font=font(34, FONT_MEDIUM), fill=MUTED, anchor="mm")
-
-    # 로고 + 팀명
-    lx, rx, ly = 300, 900, 270
-    paste_logo(canvas, logos[0], lx, ly, 260)
-    paste_logo(canvas, logos[1], rx, ly, 260)
+    # 로고 + 팀명 (칩이 없으면 조금 아래로 내려 가운데에 맞춤)
+    lx, rx = 300, 900
+    ly = 255 if has_form else 285
+    paste_logo(canvas, logos[0], lx, ly, 200)
+    paste_logo(canvas, logos[1], rx, ly, 200)
     d = ImageDraw.Draw(canvas)
-    d.text((lx, 448), home, font=font(44), fill=WHITE, anchor="mm")
-    d.text((rx, 448), away, font=font(44), fill=WHITE, anchor="mm")
-    d.text((W // 2, ly), "VS", font=font(84), fill=WHITE, anchor="mm")
+    d.text((W // 2, ly), "VS", font=font(64), fill=WHITE, anchor="mm")
+    ny = 392 if has_form else 420
+    d.text((lx, ny), home, font=fit_font(d, home, 42, 500), fill=WHITE, anchor="mm")
+    d.text((rx, ny), away, font=fit_font(d, away, 42, 500), fill=WHITE, anchor="mm")
+    if has_form:
+        d.text((lx, 436), "최근 5경기", font=font(22, FONT_MEDIUM), fill=MUTED, anchor="mm")
+        d.text((rx, 436), "최근 5경기", font=font(22, FONT_MEDIUM), fill=MUTED, anchor="mm")
+        form_chips(d, lx, 482, home_form)
+        form_chips(d, rx, 482, away_form)
 
-    # 하단 추천 바
-    bar_h = 92
-    d.rectangle((0, H - bar_h, W, H), fill=(10, 16, 30))
-    d.line([(0, H - bar_h), (W, H - bar_h)], fill=ACCENT, width=3)
-    label, value = "추천  ", pick
-    f_label, f_value = font(36, FONT_MEDIUM), font(40)
-    lw = d.textlength(label, font=f_label)
-    vw = d.textlength(value, font=f_value)
-    x0 = (W - lw - vw) / 2
-    cy = H - bar_h / 2
-    d.text((x0, cy), label, font=f_label, fill=MUTED, anchor="lm")
-    d.text((x0 + lw, cy), value, font=f_value, fill=ACCENT, anchor="lm")
+    # 아래 추천 알약
+    text = "추천  " + pick
+    f = fit_font(d, text, 34, W - 200)
+    tw = d.textlength(text, font=f)
+    pw = max(540, int(tw) + 90)
+    d.rounded_rectangle(((W - pw) // 2, 538, (W + pw) // 2, 602), radius=32, fill=RED + (255,))
+    d.text((W // 2, 570), text, font=f, fill=(255, 255, 255), anchor="mm")
 
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     canvas.convert("RGB").save(out, "PNG")
@@ -227,8 +256,13 @@ def main():
     ap.add_argument("--league", default="", help="상단 라벨 (예: A리그 개막전)")
     ap.add_argument("--pick", required=True, help="추천 (예: 시드니FC 승 @2.02)")
     ap.add_argument("--out", required=True, help="저장할 PNG 경로")
+    ap.add_argument("--kickoff", default="", help="경기 시각 라벨 (예: 11/26(수) 05:00 KST)")
+    ap.add_argument("--home-form", default="", help="홈팀 최근 5경기 (예: LWWWD, 오래된 순)")
+    ap.add_argument("--away-form", default="", help="원정팀 최근 5경기")
     args = ap.parse_args()
-    make(args.home, args.away, args.league, args.pick, args.out, args.home_en, args.away_en)
+    clean = lambda v: [c for c in (v or "").upper() if c in "WDL"]
+    make(args.home, args.away, args.league, args.pick, args.out, args.home_en, args.away_en,
+         args.kickoff, clean(args.home_form), clean(args.away_form))
 
 
 if __name__ == "__main__":

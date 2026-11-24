@@ -414,11 +414,23 @@ def process(aid, submit, done, board, reuse=False):
                 images.append(f"card_{i}.png")
                 post["layout"] = "card"
         else:
+            extra = []  # 2026-11-25 제프: 배너에 경기 시각 + 최근 5경기 칩 (ESPN, 못 찾으면 칩만 빠짐)
+            try:
+                mk_ = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else {}
+                if mk_.get("label"):
+                    extra += ["--kickoff", mk_["label"]]
+                if board.get("sport", "football") == "football" and mk_.get("kickoff_kst"):
+                    import espn_form
+                    hf, af = espn_form.forms(m.get("home_en"), m.get("away_en"), mk_["kickoff_kst"])
+                    if hf and af:
+                        extra += ["--home-form", "".join(hf), "--away-form", "".join(af)]
+            except Exception as e:
+                print(f"  [최근 경기 칩 건너뜀] {str(e)[:80]}")
             code, _ = run(["make_banner.py", "--home", m["home"], "--home-en", m["home_en"],
                            "--away", m["away"], "--away-en", m["away_en"],
                            "--league", league,
                            "--pick", post["pick"] if len(post.get("matches", [])) == 1 else m["pick"],
-                           "--out", os.path.join(folder, f"banner_{i}.png")], f"[{aid}] 경기 {i} 로고 배너")
+                           "--out", os.path.join(folder, f"banner_{i}.png")] + extra, f"[{aid}] 경기 {i} 로고 배너")
             if code == 0:
                 images.append(f"banner_{i}.png")
         if board.get("chart") == "pitcher" and i not in no_card and os.path.exists(os.path.join(HERE, folder, f"pitcher_{i}.json")):

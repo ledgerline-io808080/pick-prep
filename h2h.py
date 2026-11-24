@@ -489,6 +489,7 @@ KO_ESPN = {"즈베즈다": "Red Star Belgrade", "에스칼데스": "Inter D'Esca
            "루가노": "FC Lugano", "카우노잘기리스": "Kauno Zalgiris", "크라이오바": "CSU Craiova", "에그나티아": "Egnatia",
            "리가": "Riga FC", "야블로네츠": "Jablonec", "빌럼II": "Willem II", "즈볼레": "PEC Zwolle",
            "비제우": "Académico de Viseu", "나시오날": "C.D. Nacional", "에스트렐라": "Estrela", "마리티무": "Maritimo", "히우아브": "Rio Ave",
+           "LAFC": "LAFC", "로스앤젤레스FC": "LAFC", "로스엔젤레스FC": "LAFC", "세인트루이스": "St. Louis CITY SC", "세인트루이스시티": "St. Louis CITY SC",  # 2026-11-24 손흥민 LAFC 경기가 ESPN 이름(LAFC)과 안 맞아 못 올림
            "산타클라라": "Santa Clara", "아로카": "Arouca", "에스토릴": "Estoril", "파물리캉": "FC Famalicao", "비토리아기마랑이스": "Vitória de Guimaraes"}
 
 

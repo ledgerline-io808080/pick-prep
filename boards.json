@@ -49,7 +49,7 @@
     "name": "라이브스코어 축구 (적중PD·픽타벅스·부스터픽대통령·POLICE)",
     "source": "livescore",
     "board_url": "https://livescore.co.kr/mobile/bbs/board.php?bo_table=soccer",
-    "author": "부스터픽대통령,",
+    "author": "부스터픽대통령,적중PD,픽타벅스,",
     "sport": "football",
     "style": "C",
     "theme": "A",

@@ -20,30 +20,52 @@ def _norm(s):
 def _ascii(t):
     """é·ü 같은 악센트 글자는 차트 글꼴에서 네모로 나와 기본 글자로 바꿈"""
     import unicodedata
-    return "".join(c for c in unicodedata.normalize("NFKD", t or "") if not unicodedata.combining(c))
+    t = (t or "").translate(str.maketrans({"ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "ß": "ss", "đ": "d", "Đ": "D", "ł": "l", "Ł": "L", "œ": "oe"}))
+    return "".join(c for c in unicodedata.normalize("NFKD", t) if not unicodedata.combining(c))
+
+
+_STOP = {"fc", "sc", "cf", "rc", "fk", "ac", "as", "afc", "club", "cd", "sk", "bk", "if", "fcsb"}
+
+
+def _core(t):
+    """팀 이름에서 FC·SC 같은 흔한 꼬리표·악센트·기호를 빼고 핵심 단어만 (예: 'FC Porto'='Porto', 'Houston Dynamo FC'='Houston Dynamo')"""
+    words = re.findall(r"[a-z0-9]+", _ascii(t).lower())
+    core = [w for w in words if w not in _STOP]
+    return "".join(core or words)
 
 
 def team_id(name_en):
-    """영어 팀명으로 ESPN 팀 번호. 같은 이름이 여럿(여자팀·21세 이하)이면 맨 앞 남자 1군."""
+    """영어 팀명으로 ESPN (팀 번호, 대표 리그). 같은 이름이 여럿(여자팀·21세 이하)이면 남자 1군."""
     key = ("id", name_en)
     if key in _cache:
         return _cache[key]
-    tid = None
-    lgslug = ""
+    best, tid, lgslug = 0.0, None, ""
     try:
-        r = requests.get("https://site.web.api.espn.com/apis/common/v3/search",
-                         params={"query": name_en, "type": "team", "limit": 6, "sport": "soccer"}, timeout=20, headers=UA)
-        items = r.json().get("items") or []
-        want = _norm(name_en)
-        for it in items:
-            nm = _norm(it.get("displayName") or it.get("name"))
-            lg = (it.get("league") or "")
-            if nm == want and ".w." not in lg and not re.search(r"u\d\d", nm):
-                tid = it.get("id")
-                lgslug = lg
+        import difflib
+        want = _core(name_en)
+        plain = re.sub(r"[^A-Za-z0-9 ]+", " ", _ascii(name_en)).split()
+        queries = [name_en, " ".join(plain), " ".join(w for w in plain if w.lower() not in _STOP)]  # ESPN 검색은 'RC Lens'·'FK Bodø/Glimt' 같은 이름은 못 찾음 → 꼬리표·기호를 뺀 이름도 시도
+        seen_q = set()
+        for q in queries:
+            if not q or q in seen_q:
+                continue
+            seen_q.add(q)
+            r = requests.get("https://site.web.api.espn.com/apis/common/v3/search",
+                             params={"query": q, "type": "team", "limit": 8, "sport": "soccer"}, timeout=20, headers=UA)
+            for it in r.json().get("items") or []:
+                nm = _core(it.get("displayName") or it.get("name"))
+                lg = it.get("league") or ""
+                if ".w." in lg or re.search(r"u\d\d", _norm(it.get("displayName") or "")):
+                    continue
+                sc = 1.0 if nm == want else (0.9 if (want and nm and (want in nm or nm in want)) else difflib.SequenceMatcher(None, want, nm).ratio())
+                if sc > best:
+                    best, tid, lgslug = sc, it.get("id"), lg
+            if best >= 0.9:
                 break
+        if best < 0.7:
+            tid, lgslug = None, ""
     except Exception:
-        tid = None
+        tid, lgslug = None, ""
     _cache[key] = (tid, lgslug)
     return _cache[key]
 

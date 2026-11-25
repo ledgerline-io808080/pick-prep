@@ -130,7 +130,7 @@
   "DC 유나이티드": "D.C. United",
   "오스틴 FC": "Austin FC",
   "밴쿠버 화이트캡스 FC": "Vancouver Whitecaps FC",
-  "휴스턴 다이너모": "Houston Dynamo FC",
+  "휴스턴 다이너모": "Houston Dynamo",
   "FC 댈러스": "FC Dallas",
   "스포팅 캔자스시티": "Sporting Kansas City",
   "리얼 솔트레이크": "Real Salt Lake",
@@ -269,7 +269,7 @@
   "알디리야": "Al-Diriyah",
   "알리야드 SC": "Al Riyadh SC",
   "알 타원": "Al Taawoun",
-  "알 카디시야": "Al-Qadsiah",
+  "알 카디시야": "Al Qadsiah",
   "알나스르": "Al Nassr",
   "네옴 SC": "NEOM SC",
   "알 에티파크": "Al Ettifaq",
@@ -819,5 +819,14 @@
   "FC 포르투": "FC Porto",
   "슬로반 브라티슬라바": "Slovan Bratislava",
   "산호세": "San Jose Earthquakes",
-  "알 시브 클럽": "Al Seeb Club"
+  "알 시브 클럽": "Al Seeb Club",
+  "가시마앤틀러스": "Kashima Antlers",
+  "왓포드": "Watford",
+  "스토크시티": "Stoke City",
+  "밀월": "Millwall",
+  "산호세 어스퀘이크스": "San Jose Earthquakes",
+  "테꽁 비에텔": "Viettel FC",
+  "포트 FC": "Port FC",
+  "페르시브 반둥": "Persib Bandung",
+  "나사프 카르시": "Nasaf Qarshi"
 }

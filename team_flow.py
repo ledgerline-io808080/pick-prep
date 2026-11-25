@@ -73,7 +73,11 @@ def main():
     for i, m in enumerate(post.get("matches", []), 1):
         mp = os.path.join(folder, f"match_{i}.json")
         mk = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else {}
-        g = game_info(mk["naver_game_id"]) if mk.get("naver_game_id") else None
+        try:  # 네이버 연결이 끊겨도 멈추지 않고 ESPN 으로 넘어감 (2026-11-25: 연결 오류로 팀 흐름 단계가 통째로 죽어 차트가 빠졌음)
+            g = game_info(mk["naver_game_id"]) if mk.get("naver_game_id") else None
+        except Exception as e:
+            print(f"  [네이버 연결 실패] 경기 {i}: {str(e)[:60]}")
+            g = None
         if not g:
             # 2026-11-25 제프: 차트가 비는 경기는 ESPN 경기 결과로 대신 (네이버가 서버에서 응답이 없을 때 대표팀·MLS 등)
             if sport == "football" and mk.get("kickoff_kst") and m.get("home_en") and m.get("away_en"):

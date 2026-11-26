@@ -1,12 +1,19 @@
 {
-  "at": "2026-11-26 12:04",
+  "at": "2026-11-26 22:19",
   "rows": [
     {
       "aid": "320591",
       "board": "dolharbang",
       "status": "경기 확인 실패 - 게시 안 함",
+      "tries": 3,
+      "title": "[NBA] 멤피스 vs LA클리퍼스 핵심 정리"
+    },
+    {
+      "aid": "ls1722236",
+      "board": "ls_baseball",
+      "status": "경기 확인 실패 - 게시 안 함",
       "tries": 2,
-      "title": "[NBA] 멤피스 vs LA클리퍼스 매치업"
+      "title": "[WBSC 조합] 그레이트브리튼 vs 니카라과 · 중국 vs 체코 선발 매치업"
     }
   ]
 }

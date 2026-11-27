@@ -668,6 +668,32 @@ def apbc_match(m, article_time=None):
     return _official_result(m, "APBC 일정(위키트리)", ko, "APBC", now)
 
 
+# 2026-11-27 제프 요청: 농구 월드컵(FIBA) 아시아 예선은 네이버·ESPN·KBL 일정 어디에도 없어 한국전 글이 막힘 → 확인된 경기 시간표를 직접 둠(APBC 와 같은 방식).
+# 시간은 한국 시간. 출처: 위키트리·네이트 스포츠·톱스타뉴스·싱글리스트 보도(한국-카타르 27일 01:00 74-52 승, 한국-사우디 30일 01:00, 도하 알자누브 스타디움).
+# 다른 나라끼리 경기·유럽/아메리카 예선은 시간을 못 찾아 넣지 않음 → 그 글은 계속 게시 안 함. 시간을 알면 FIBA_GAMES 에 한 줄 추가.
+FIBA_TEAMS = {"대한민국": "KOR", "한국": "KOR", "카타르": "QAT", "사우디아라비아": "KSA", "사우디": "KSA"}
+FIBA_GAMES = {frozenset(("KOR", "QAT")): (2026, 11, 27, 1, 0), frozenset(("KOR", "KSA")): (2026, 11, 30, 1, 0)}
+
+
+def fiba_match(m, article_time=None):
+    """농구 월드컵 예선 확인된 경기 시간표로 경기 시간 확인."""
+    now = datetime.datetime.now(KST)
+    codes = []
+    for k in ("home", "away"):
+        c = FIBA_TEAMS.get(re.sub(r"\s+", "", m[k]))
+        if not c:
+            raise RuntimeError(f"FIBA 시간표에 없는 팀: {m[k]}")
+        codes.append(c)
+    g = FIBA_GAMES.get(frozenset(codes))
+    if not g:
+        raise RuntimeError("FIBA 경기 시간표에 없는 경기 (시간을 확인하지 못함)")
+    ko = datetime.datetime(*g, tzinfo=KST)
+    base = (article_time or now).astimezone(KST)
+    if abs((ko - base).total_seconds()) > 72 * 3600:
+        raise RuntimeError("FIBA 경기 날짜가 글 날짜와 맞지 않음")
+    return _official_result(m, "FIBA 예선 일정(언론 보도)", ko, "농구 월드컵 예선", now)
+
+
 def _pick_game(cands, base):
     """글이 올라온 시각 직후의 가장 빠른 경기(글이 올라오기 6시간 전까지는 인정), 없으면 가장 최근 경기.
     (지금 시각 기준으로 고르면 지난 글이 며칠 뒤 다른 경기로 잘못 이어짐)"""
@@ -912,8 +938,12 @@ def main():
                         try:
                             stats, match = kbl_match(m, article_time)
                         except Exception as e1:
-                            print(f"  [KBL 공식 일정 없음] {e1} → NBA(ESPN)")
-                            stats, match = nba_match(m, article_time)
+                            print(f"  [KBL 공식 일정 없음] {e1} → FIBA 시간표")
+                            try:
+                                stats, match = fiba_match(m, article_time)
+                            except Exception as e1b:
+                                print(f"  [FIBA 시간표 없음] {e1b} → NBA(ESPN)")
+                                stats, match = nba_match(m, article_time)
                 else:
                     stats, match = naver_match(m, article_time)
             except Exception as e2:

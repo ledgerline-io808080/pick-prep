@@ -19,6 +19,10 @@ on:
       board:
         description: "한 게시판만 (boards.json 의 key, 예: ls_baseball)"
         required: false
+      tick:
+        description: "이어달리기(tick)가 요청한 실행 — 예약 실행과 똑같이 동작 (새 글 있을 때만 전체 실행)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -49,17 +53,17 @@ jobs:
 
       # ---- 여기부터는 새 글이 있을 때(또는 직접 실행했을 때)만 ----
       - uses: actions/setup-python@v5
-        if: steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true)
         with:
           python-version: "3.12"
 
       - uses: actions/setup-node@v4
-        if: steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true)
         with:
           node-version: "22"
 
       - name: 프로그램 설치
-        if: steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true)
         run: |
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
@@ -67,7 +71,7 @@ jobs:
           npm install -g @anthropic-ai/claude-code
 
       - name: 글 만들기
-        if: steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true)
         env:
           HEADLESS: "1"
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -76,15 +80,15 @@ jobs:
           ARGS="--count 3"
           if [ -n "${{ inputs.article }}" ]; then ARGS="--article ${{ inputs.article }}"; fi
           if [ -n "${{ inputs.board }}" ]; then ARGS="$ARGS --board ${{ inputs.board }}"; fi
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.submit }}" = "true" ]; then ARGS="$ARGS --submit"; fi
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.submit }}" = "true" ] || [ "${{ inputs.tick }}" = "true" ]; then ARGS="$ARGS --submit"; fi
           python -u run_prepare.py $ARGS
 
       - name: 계속 막힌 글 확인
-        if: always() && (github.event_name == 'schedule' || inputs.submit == true) && (steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || inputs.tick == true || inputs.submit == true) && (steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true))
         run: python3 stuck_alert.py
 
       - name: 처리 기록 저장 (done.json 등)
-        if: always() && (steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch')
+        if: always() && (steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true))
         run: |
           git config user.name "builder"
           git config user.email "builder@users.noreply.github.com"
@@ -92,7 +96,7 @@ jobs:
 
       - name: 완성된 글 전달 (queue 가지)
         id: push
-        if: always() && (steps.check.outputs.new == 'true' || github.event_name == 'workflow_dispatch')
+        if: always() && (steps.check.outputs.new == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tick != true))
         run: python3 push_queue.py
 
       # 등록 쪽(비공개 저장소)에 알림. 저장소 이름은 비밀값 POST_REPO, 권한 토큰은 DISPATCH_TOKEN

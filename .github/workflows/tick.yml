@@ -1,0 +1,35 @@
+# 이어달리기 (2026-11-28 제프): GitHub 가 예약 실행(cron)을 자주 건너뛰어(하루 1~3번) 새 글 확인이 몇 시간씩 비었음.
+# 이 작업이 prep 확인을 요청하고, 약 9분 기다린 뒤 자기 자신을 다시 요청해 10분마다 이어서 돌게 한다.
+# 이어달리기가 끊기면 아래 예약(30분마다)이 다시 이어 준다. 공개 저장소라 실행 시간 제한 없음.
+name: tick
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: tick
+  cancel-in-progress: false   # 실행 중 1개 + 대기 1개만 유지 → 이어달리기가 둘로 늘지 않음
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 새 글 확인(prep) 요청
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run prep.yml --repo "$GITHUB_REPOSITORY" -f tick=true
+
+      - name: 9분 기다림
+        run: sleep 540
+
+      - name: 다음 이어달리기 요청
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run tick.yml --repo "$GITHUB_REPOSITORY"

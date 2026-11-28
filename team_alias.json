@@ -35,7 +35,7 @@
   "KIA 타이거즈": "KIA Tigers",
   "LG 트윈스": "LG Twins",
   "샬케": "Schalke 04",
-  "마인츠": "1. FSV Mainz 05",
+  "마인츠": "Mainz 05",
   "브레멘": "SV Werder Bremen",
   "파더보른": "SC Paderborn 07",
   "다렌영보이": "Dalian Yingbo",
@@ -369,7 +369,7 @@
   "댈러스": "Dallas Mavericks",
   "포틀랜드": "Portland Trail Blazers",
   "피닉스": "Phoenix Suns",
-  "LA클리퍼스": "LA Clippers",
+  "LA클리퍼스": "Los Angeles Clippers",
   "새크라멘토": "Sacramento Kings",
   "워싱턴": "Washington Wizards",
   "밀워키": "Milwaukee Bucks",
@@ -577,7 +577,7 @@
   "프로시노네 칼초": "Frosinone Calcio",
   "오세르": "AJ Auxerre",
   "KB스타즈": "Cheongju KB Stars",
-  "BNK썸": "Busan BNK Sum",
+  "BNK썸": "BNK Sum",
   "앙제": "Angers",
   "레체": "Lecce",
   "툴루즈": "Toulouse FC",
@@ -598,7 +598,7 @@
   "슬로반 브라티": "Slovan Bratislava",
   "아스톤빌라": "Aston Villa",
   "신한은행": "Shinhan Bank S-Birds",
-  "우리은행": "Asan Woori Bank Woori WON",
+  "우리은행": "Asan Woori Bank Wibee",
   "홍콩 이스턴": "Hong Kong Eastern",
   "타이난 TSG": "Tainan TSG GhostHawks",
   "엘버크 도쿄": "Alvark Tokyo",
@@ -913,5 +913,6 @@
   "아랍에미리트": "United Arab Emirates",
   "브라질": "Brazil",
   "도미니카공화국": "Dominican Republic",
-  "영국": "Great Britain"
+  "영국": "Great Britain",
+  "U베를린": "Union Berlin"
 }

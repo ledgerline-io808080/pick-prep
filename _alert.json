@@ -1,26 +1,26 @@
 {
-  "at": "2026-11-28 15:43",
+  "at": "2026-11-28 15:53",
   "rows": [
     {
       "aid": "320976",
       "board": "dolharbang",
-      "status": "대조 불일치",
-      "tries": 6,
-      "title": ""
+      "status": "경기 확인 실패 - 게시 안 함",
+      "tries": 7,
+      "title": "[WKBL] 삼성생명 vs 신한은행 선발 매치업"
     },
     {
       "aid": "ls1722251",
       "board": "ls_baseball",
       "status": "경기 확인 실패 - 게시 안 함",
-      "tries": 5,
+      "tries": 6,
       "title": "[WBSC] 영국 vs 중국 선발 매치업"
     },
     {
       "aid": "ls241519",
       "board": "ls_volleyball",
       "status": "경기 확인 실패 - 게시 안 함",
-      "tries": 5,
-      "title": "[V-리그 남자·V-리그 여자 조합] 대한항공 vs KB손해보험 · 흥국생명 vs GS칼텍스 분석"
+      "tries": 6,
+      "title": "[V-리그 남자·V-리그 여자 조합] 대한항공 vs KB손해보험 · 홍국생명 vs GS칼텍스 분석"
     }
   ]
 }
